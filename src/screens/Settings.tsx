@@ -72,7 +72,6 @@ function PlayerCard() {
         </div>
         <Toggle on={settings?.videoMatchHdr ?? true} labelledBy="opt-matchHdr" onChange={async (on) => setSettings(await api.setGeneral("videoMatchHdr", on))} />
       </div>
-      <p className="lbl" style={{ margin: 0 }}>{t("settings.playerHint")}</p>
     </Glass>
   );
 }
@@ -144,9 +143,11 @@ function HdrCard() {
             <Button variant="pri" disabled={busy} onClick={() => test(true)}>{t("settings.tryOn")}</Button>
             <Button disabled={busy} onClick={() => test(false)}>{t("settings.tryOff")}</Button>
           </div>
-          <span className={`lbl ${s.msg}`} role="status" style={{ color: msg && !msg.ok ? "var(--warn)" : undefined }}>
-            {msg?.text ?? ""}
-          </span>
+          {msg ? (
+            <span className="lbl" role="status" style={{ color: msg.ok ? undefined : "var(--warn)" }}>
+              {msg.text}
+            </span>
+          ) : null}
         </>
       ) : (
         <div className={s.deviceRow}>

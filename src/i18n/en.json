@@ -122,12 +122,11 @@
     "nowOff": "HDR is off",
     "failed": "Didn't work: {{error}}",
     "player": "Video player",
-    "playerHint": "KaiSync watches the player; when you close it, HDR goes back as it was.",
     "change": "Change",
     "pickPlayer": "Pick your video player",
     "playerMissing": "File not found",
     "matchHdr": "HDR follows the video",
-    "matchHdrHint": "HDR videos turn HDR on, SDR videos turn it off. Off = every video turns HDR off."
+    "matchHdrHint": "HDR videos turn HDR on, SDR videos turn it off; closing the player puts it back. Off = every video turns HDR off."
   },
   "tray": {
     "open": "Open KaiSync",
