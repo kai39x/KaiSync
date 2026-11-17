@@ -46,6 +46,9 @@ pub struct Settings {
     pub hdr_display: Option<String>,
     /// The one video player. `None` = auto-detect PotPlayer.
     pub player_path: Option<String>,
+    /// HDR follows the video: HDR videos turn HDR on, SDR videos turn it off.
+    /// Off = every video turns HDR off.
+    pub video_match_hdr: bool,
     /// Start with Windows (tray only). Applied to the system in milestone 6.
     pub autostart: bool,
     /// Desktop shortcut. Applied to the system in milestone 6.
@@ -64,6 +67,7 @@ impl Default for Settings {
             game_enabled: BTreeMap::new(),
             hdr_display: None,
             player_path: None,
+            video_match_hdr: true,
             autostart: true,
             desktop_shortcut: true,
             debounce_ms: 3000,

@@ -164,6 +164,7 @@ pub fn set_general(app: AppHandle, engine: State<Engine>, key: String, value: bo
             crate::system::set_autostart(&app, value);
             Ok(engine.update_settings(false, |s| s.autostart = value))
         }
+        "videoMatchHdr" => Ok(engine.update_settings(false, |s| s.video_match_hdr = value)),
         "desktopShortcut" => {
             crate::system::set_shortcut(value)?;
             Ok(engine.update_settings(false, |s| s.desktop_shortcut = value))

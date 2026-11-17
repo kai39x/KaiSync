@@ -9,7 +9,7 @@ async function invoke<T>(cmd: string, args?: Record<string, unknown>): Promise<T
   return mockInvoke<T>(cmd, args);
 }
 
-export type Mode = "idle" | "video" | "game";
+export type Mode = "idle" | "video" | "videoHdr" | "game";
 export type Source = "steam" | "epic" | "xbox" | "folder" | "manual";
 
 export interface HdrStatus {
@@ -28,6 +28,8 @@ export interface Status {
   rawDetail: string | null;
   scanning: boolean;
   hdr: HdrStatus;
+  /** The file the video player shows (when "HDR follows the video" is on). */
+  video: { file: string; hdr: "HDR10" | "HLG" | "Dolby Vision" | "HDR" | null } | null;
 }
 
 export interface Display {
@@ -80,6 +82,7 @@ export interface Settings {
   gameEnabled: Record<string, boolean>;
   hdrDisplay: string | null;
   playerPath: string | null;
+  videoMatchHdr: boolean;
   autostart: boolean;
   desktopShortcut: boolean;
   debounceMs: number;
@@ -105,7 +108,7 @@ export const api = {
   pickFolderExe: (id: string, exe: string) => invoke<Settings>("pick_folder_exe", { id, exe }),
   setPlayer: (path: string) => invoke<Settings>("set_player", { path }),
   setLanguage: (language: string) => invoke<Settings>("set_language", { language }),
-  setGeneral: (key: "autostart" | "desktopShortcut", value: boolean) => invoke<Settings>("set_general", { key, value }),
+  setGeneral: (key: "autostart" | "desktopShortcut" | "videoMatchHdr", value: boolean) => invoke<Settings>("set_general", { key, value }),
   openLogsFolder: () => invoke<void>("open_logs_folder"),
   listDisplays: () => invoke<DisplaysView>("list_displays"),
   setHdrDisplay: (id: string) => invoke<Settings>("set_hdr_display", { id }),

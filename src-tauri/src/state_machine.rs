@@ -1,4 +1,4 @@
-//! Modes (Game > Video > Idle) and debouncing.
+//! Modes (Game > Video > Idle) and debouncing. Video is split by the file's HDR.
 
 use std::time::{Duration, Instant};
 
@@ -8,7 +8,11 @@ use serde::Serialize;
 #[serde(rename_all = "lowercase")]
 pub enum Mode {
     Idle,
+    /// The player is open with an SDR video (or nothing loaded): HDR off.
     Video,
+    /// The player is showing an HDR video: HDR on.
+    #[serde(rename = "videoHdr")]
+    VideoHdr,
     Game,
 }
 

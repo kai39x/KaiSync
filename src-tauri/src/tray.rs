@@ -126,7 +126,7 @@ pub fn update(app: &AppHandle, st: &Status) {
             match st.mode {
                 Mode::Idle => m[0],
                 Mode::Game => m[1],
-                Mode::Video => m[3],
+                Mode::Video | Mode::VideoHdr => m[3],
             }
         };
         let tip = match (&st.detail, st.paused) {
@@ -149,7 +149,7 @@ pub fn orb_icon(mode: Mode, paused: bool) -> Image<'static> {
     } else {
         match mode {
             Mode::Game => [0x5cc8ff, 0x9b8cff, 0x6ee7ff, 0x5b6cff],
-            Mode::Video => [0xffb84d, 0xff7aa8, 0xffd76a, 0xff9361],
+            Mode::Video | Mode::VideoHdr => [0xffb84d, 0xff7aa8, 0xffd76a, 0xff9361],
             Mode::Idle => [0xe8e8e8, 0x8a8a8a, 0xf5f5f5, 0x5a5a5a],
         }
     };

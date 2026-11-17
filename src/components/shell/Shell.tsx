@@ -2,7 +2,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { useTranslation } from "react-i18next";
 import type { CSSProperties, ReactNode } from "react";
-import { Dot, Glass, MiniOrb, PALETTE, Sphere, type OrbMode } from "../ui";
+import { Dot, Glass, MiniOrb, PALETTE, Sphere, orbMode, type OrbMode } from "../ui";
 import { IconGamepad, IconHome, IconSliders } from "../ui/icons";
 import { useStore } from "../../state/store";
 import { inTauri } from "../../api";
@@ -124,7 +124,7 @@ function Sidebar({ page, onNavigate }: { page: Page; onNavigate: (p: Page) => vo
       <div className={s.spacer} />
       <Glass as="div" className={s.statusCard}>
         <div style={{ opacity: paused ? 0.35 : 1, transition: "opacity .4s" }}>
-          <MiniOrb mode={mode} />
+          <MiniOrb mode={orbMode(mode)} />
         </div>
         <div className={s.statusText}>
           <span className={s.statusTitle}>{t(paused ? "modes.paused" : `modes.${mode}`)}</span>
@@ -144,7 +144,7 @@ export function Shell({ page, onNavigate, children }: { page: Page; onNavigate: 
   const reduce = useReducedMotion();
   return (
     <div className={s.app}>
-      <Bubbles page={page} mode={status?.paused ? "idle" : (status?.mode ?? "idle")} />
+      <Bubbles page={page} mode={status?.paused ? "idle" : orbMode(status?.mode)} />
       <TitleBar />
       <div className={s.body}>
         <Sidebar page={page} onNavigate={onNavigate} />

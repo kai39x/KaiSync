@@ -1,20 +1,26 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../api";
-import { Button, Dot, Glass, Sphere, StatusOrb } from "../components/ui";
+import { Button, Dot, Glass, Sphere, StatusOrb, orbMode } from "../components/ui";
 import { IconChevron, IconGamepad, IconHdr, IconMonitor, IconPause, IconPlay, IconPlayCircle, IconRestore } from "../components/ui/icons";
 import { useStore } from "../state/store";
 import s from "./screens.module.css";
 
 export function Home() {
   const { t } = useTranslation();
-  const { status, library } = useStore();
+  const { status, library, settings } = useStore();
   const paused = !!status?.paused;
   const mode = status?.mode ?? "idle";
   const hdr = status?.hdr;
 
   const title = paused ? t("modes.paused") : t(`modes.${mode}`);
-  const sub = paused ? t("home.pausedSub") : mode === "idle" ? t("home.idleSub") : (status?.detail ?? "");
+  const videoKind =
+    mode === "videoHdr" ? t("home.videoHdr", { kind: status?.video?.hdr ?? "HDR" }) : mode === "video" && status?.video ? t("home.videoSdr") : null;
+  const sub = paused
+    ? t("home.pausedSub")
+    : mode === "idle"
+      ? t("home.idleSub")
+      : [status?.detail, videoKind].filter(Boolean).join(" · ");
   const enabledGames = library?.games.filter((g) => g.enabled && !g.needsPick).length ?? 0;
 
   return (
@@ -49,7 +55,7 @@ export function Home() {
             </Button>
           </div>
         </div>
-        <StatusOrb mode={mode} paused={paused} />
+        <StatusOrb mode={orbMode(mode)} paused={paused} />
       </Glass>
 
       <div className={s.stats}>
@@ -106,7 +112,7 @@ export function Home() {
           <IconPlayCircle color="#ffb84d" />
           <span className={s.ruleName}>{t("home.rVideo")}</span>
           <span className={s.ruleArrow}><IconChevron size={14} /></span>
-          <span className={s.ruleDo}>{t("home.rVideoDo")}</span>
+          <span className={s.ruleDo}>{settings?.videoMatchHdr ? t("home.rVideoMatch") : t("home.rVideoDo")}</span>
         </div>
         <div className={s.rule}>
           <IconMonitor color="#bdbdbd" />

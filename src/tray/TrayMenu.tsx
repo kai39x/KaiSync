@@ -5,7 +5,7 @@ import { listen } from "@tauri-apps/api/event";
 import { getCurrentWindow, LogicalSize } from "@tauri-apps/api/window";
 import { useTranslation } from "react-i18next";
 import { inTauri } from "../api";
-import { MiniOrb } from "../components/ui";
+import { MiniOrb, orbMode } from "../components/ui";
 import { useStore } from "../state/store";
 import s from "./tray.module.css";
 
@@ -68,7 +68,7 @@ export function TrayMenu() {
         <div className={s.blobB} aria-hidden />
         <div className={s.head}>
           <div style={{ opacity: paused ? 0.35 : 1 }}>
-            <MiniOrb mode={mode} size={38} />
+            <MiniOrb mode={orbMode(mode)} size={38} />
           </div>
           <div className={s.headText}>
             <span className={s.title}>{title}</span>

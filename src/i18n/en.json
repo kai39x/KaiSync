@@ -18,7 +18,8 @@
     "game": "Game mode",
     "idle": "Idle",
     "paused": "Automation paused",
-    "video": "Watching mode"
+    "video": "Watching mode",
+    "videoHdr": "Watching mode"
   },
   "home": {
     "sub": "KaiSync turns HDR on for games, off for videos, and puts it back afterwards.",
@@ -38,7 +39,7 @@
     "gamesSub": "From Steam, Epic, Xbox and your folders",
     "scanning": "Scanning libraries…",
     "restore": "Restore",
-    "restoreOurs": "Off after the game",
+    "restoreOurs": "Off when you're done",
     "restoreOursSub": "KaiSync turned HDR on",
     "restoreYours": "Left alone",
     "restoreYoursSub": "HDR stays as you set it",
@@ -50,7 +51,10 @@
     "rVideo": "Video",
     "rVideoDo": "HDR off",
     "restoreOn": "On again after the video",
-    "restoreOnSub": "KaiSync turned HDR off for the video"
+    "restoreOnSub": "KaiSync turned HDR off for the video",
+    "videoHdr": "HDR video ({{kind}})",
+    "videoSdr": "SDR video",
+    "rVideoMatch": "HDR follows the video"
   },
   "games": {
     "title": "Games",
@@ -118,10 +122,12 @@
     "nowOff": "HDR is off",
     "failed": "Didn't work: {{error}}",
     "player": "Video player",
-    "playerHint": "While the player runs HDR is off; closing it puts HDR back as it was.",
+    "playerHint": "KaiSync watches the player; when you close it, HDR goes back as it was.",
     "change": "Change",
     "pickPlayer": "Pick your video player",
-    "playerMissing": "File not found"
+    "playerMissing": "File not found",
+    "matchHdr": "HDR follows the video",
+    "matchHdrHint": "HDR videos turn HDR on, SDR videos turn it off. Off = every video turns HDR off."
   },
   "tray": {
     "open": "Open KaiSync",

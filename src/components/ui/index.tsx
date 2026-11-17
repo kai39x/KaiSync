@@ -30,6 +30,11 @@ export const PALETTE: Record<OrbMode, { c: string[]; glow: string; blobs: string
   video: { c: ["#ffb84d", "#ff7aa8", "#ffd76a", "#ff9361"], glow: "rgba(255,170,90,0.26)", blobs: ["#c46a1f", "#b8406e", "#a07a1a"] },
   idle: { c: ["#e8e8e8", "#8a8a8a", "#f5f5f5", "#5a5a5a"], glow: "rgba(255,255,255,0.08)", blobs: ["#3a3a3a", "#2a2a2a", "#333333"] },
 };
+/** Engine mode -> orb palette (both video modes are amber). */
+export function orbMode(mode: string | undefined): OrbMode {
+  return mode === "game" ? "game" : mode === "video" || mode === "videoHdr" ? "video" : "idle";
+}
+
 const conic = (c: string[]) => `conic-gradient(from 0deg, ${c[0]}, ${c[1]}, ${c[2]}, ${c[3]}, ${c[0]})`;
 
 /** Small orb (sidebar card, tray). */

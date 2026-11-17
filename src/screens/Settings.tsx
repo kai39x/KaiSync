@@ -46,7 +46,7 @@ function GeneralCard() {
 
 function PlayerCard() {
   const { t } = useTranslation();
-  const { library, setSettings } = useStore();
+  const { library, settings, setSettings } = useStore();
   const p = library?.player;
   const change = async () => {
     const f = await open({ multiple: false, title: t("settings.pickPlayer"), filters: [{ name: t("games.programs"), extensions: ["exe"] }] });
@@ -64,6 +64,13 @@ function PlayerCard() {
           </span>
         </div>
         <Button onClick={change}>{t("settings.change")}</Button>
+      </div>
+      <div className={s.optRow} style={{ minHeight: 58 }}>
+        <div className={s.optText}>
+          <span id="opt-matchHdr" style={{ fontSize: 14 }}>{t("settings.matchHdr")}</span>
+          <span className="lbl" style={{ lineHeight: 1.6 }}>{t("settings.matchHdrHint")}</span>
+        </div>
+        <Toggle on={settings?.videoMatchHdr ?? true} labelledBy="opt-matchHdr" onChange={async (on) => setSettings(await api.setGeneral("videoMatchHdr", on))} />
       </div>
       <p className="lbl" style={{ margin: 0 }}>{t("settings.playerHint")}</p>
     </Glass>
@@ -165,10 +172,10 @@ export function Settings() {
       <div className={s.settingsGrid}>
         <div className={s.col}>
           <PlayerCard />
-          <GeneralCard />
+          <HdrCard />
         </div>
         <div className={s.col}>
-          <HdrCard />
+          <GeneralCard />
         </div>
       </div>
     </>

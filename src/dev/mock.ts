@@ -3,7 +3,7 @@ import type { DisplaysView, LibraryView, Settings, Status } from "../api";
 
 const params = new URLSearchParams(location.search);
 const m = params.get("mode");
-const mode = m === "game" ? "game" : m === "video" ? "video" : "idle";
+const mode = m === "game" ? "game" : m === "video" ? "video" : m === "videoHdr" ? "videoHdr" : "idle";
 
 let settings: Settings = {
   language: params.get("lang") === "en" ? "en" : "ar",
@@ -14,6 +14,7 @@ let settings: Settings = {
   gameEnabled: {},
   hdrDisplay: null,
   playerPath: null,
+  videoMatchHdr: true,
   autostart: true,
   desktopShortcut: true,
   debounceMs: 3000,
@@ -21,12 +22,13 @@ let settings: Settings = {
 
 const status: Status = {
   mode,
-  detail: mode === "game" ? "Elden Ring" : mode === "video" ? "PotPlayer" : null,
+  detail: mode === "game" ? "Elden Ring" : mode === "video" ? "Frieren - 12.mkv" : mode === "videoHdr" ? "Dune Part Two (2024).mkv" : null,
   paused: params.get("paused") === "1",
   rawMode: mode,
   rawDetail: null,
   scanning: false,
-  hdr: { display: "Beyond TV", supported: true, on: mode === "game", onByKaisync: mode === "game", offByKaisync: mode === "video" },
+  hdr: { display: "Beyond TV", supported: true, on: mode === "game" || mode === "videoHdr", onByKaisync: mode === "game" || mode === "videoHdr", offByKaisync: mode === "video" },
+  video: mode === "video" ? { file: "Frieren - 12.mkv", hdr: null } : mode === "videoHdr" ? { file: "Dune Part Two (2024).mkv", hdr: "Dolby Vision" } : null,
 };
 
 const root = "C:\\Users\\Kai\\Pictures\\games";

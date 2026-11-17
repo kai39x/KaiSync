@@ -7,6 +7,7 @@ mod settings;
 mod state_machine;
 mod system;
 mod tray;
+mod video;
 
 use std::sync::Mutex;
 
