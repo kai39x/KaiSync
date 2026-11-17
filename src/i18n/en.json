@@ -21,7 +21,7 @@
     "video": "Watching mode"
   },
   "home": {
-    "sub": "KaiSync turns HDR on when a game starts and restores it when you close it.",
+    "sub": "KaiSync turns HDR on for games, off for videos, and puts it back afterwards.",
     "now": "Right now",
     "idleSub": "No game running",
     "pausedSub": "HDR is yours until you resume",
