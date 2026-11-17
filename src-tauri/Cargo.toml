@@ -1,0 +1,40 @@
+[package]
+name = "kaisync"
+version = "0.1.0"
+description = "Automatic Windows HDR switcher"
+edition = "2021"
+
+[lib]
+name = "kaisync_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[[bin]]
+name = "kaisync"
+path = "src/main.rs"
+
+[dependencies]
+dirs = "7.0.0"
+notify-debouncer-mini = "0.7.0"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+strsim = "0.11.1"
+sysinfo = "0.40.4"
+tauri = { version = "2.12.6", features = ["tray-icon", "image-png"] }
+tauri-plugin-autostart = "2.7.0"
+tauri-plugin-dialog = "2.8.4"
+tauri-plugin-single-instance = "2.5.5"
+tracing = "0.1.44"
+tracing-appender = "0.2.5"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter", "fmt"] }
+windows = { version = "0.62.2", features = ["Win32_Foundation", "Win32_Storage_FileSystem", "Win32_UI_Shell", "Win32_UI_WindowsAndMessaging", "Win32_Devices_Display", "Win32_Graphics_Gdi", "Win32_System_Com"] }
+winreg = "0.56.0"
+
+[build-dependencies]
+tauri-build = { version = "2.7.5", features = [] }
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true

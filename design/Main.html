@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KaiSync — الرئيسية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#000}
+a{color:#f5f5f5}a:hover{color:#ffffff}
+@keyframes kspin{to{transform:rotate(360deg)}}
+@keyframes kfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes kbreath{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}
+.glass{background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.028));backdrop-filter:blur(28px) saturate(160%);-webkit-backdrop-filter:blur(28px) saturate(160%);border:1px solid rgba(255,255,255,.09);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 14px 34px rgba(0,0,0,.35);border-radius:18px}
+.sphere{border-radius:50%;background:radial-gradient(circle at 32% 26%,rgba(255,255,255,.95) 0 5%,rgba(255,255,255,0) 20%),radial-gradient(circle at 68% 80%,rgba(255,255,255,.16),rgba(255,255,255,0) 30%),radial-gradient(circle at 50% 50%,rgba(255,255,255,.02) 50%,rgba(255,255,255,.11) 76%,rgba(255,255,255,.42) 97%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.26),0 6px 18px rgba(0,0,0,.5)}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);pointer-events:none}
+.fl{position:absolute;animation:kfloat 8s ease-in-out infinite}
+.nav{display:flex;align-items:center;gap:12px;height:44px;padding:0 14px;border-radius:12px;color:#b0b0b0;text-decoration:none;font-size:14px;position:relative;transition:background .2s}
+.nav:hover{background:rgba(255,255,255,.05);color:#fff}
+.nav.cur{background:linear-gradient(180deg,rgba(255,255,255,.11),rgba(255,255,255,.05));color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.1),inset 0 0 0 1px rgba(255,255,255,.06)}
+.nav.cur::before{content:"";position:absolute;inset-inline-start:-6px;top:50%;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#fff 0 14%,#7fd3ff 48%,#2e9fe0 100%);box-shadow:0 0 12px rgba(92,200,255,.8)}
+.cap{width:46px;height:40px;border:none;background:transparent;color:#cfcfcf;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.cap:hover{background:rgba(255,255,255,.08)}
+.cap.x:hover{background:#c42b1c;color:#fff}
+.tg{position:relative;width:44px;height:24px;border-radius:999px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.03);padding:0;cursor:pointer;flex:none;transition:background .2s,border-color .2s}
+.tg .k{position:absolute;top:3px;inset-inline-start:3px;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#fff 0 14%,rgba(255,255,255,.8) 46%,rgba(255,255,255,.55));box-shadow:0 1px 3px rgba(0,0,0,.45);transition:inset-inline-start .32s cubic-bezier(.34,1.56,.64,1),transform .2s cubic-bezier(.34,1.56,.64,1)}
+.tg.on{background:#5cc8ff;border-color:#5cc8ff}
+.tg.on .k{inset-inline-start:23px;background:radial-gradient(circle at 32% 28%,#fff 0 16%,rgba(255,255,255,.92) 48%,rgba(214,240,255,.85))}
+.tg:active .k{transform:scale(1.3)}
+.tg:focus-visible,.btn:focus-visible,.nav:focus-visible,.seg button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.btn{height:40px;padding:0 18px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg,rgba(255,255,255,.13),rgba(255,255,255,.05));color:#fff;font:inherit;font-size:13.5px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;box-shadow:inset 0 1px 0 rgba(255,255,255,.16);white-space:nowrap;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.btn:hover{background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.08))}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:radial-gradient(120% 140% at 30% 0%,rgba(255,255,255,.55),rgba(255,255,255,0) 50%),linear-gradient(180deg,#7fd6ff,#38b0f0);color:#00131d;border-color:transparent;font-weight:600;box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 6px 20px rgba(92,200,255,.22)}
+.btn.ghost{background:transparent;border-color:transparent;box-shadow:none;color:#cfcfcf}
+.btn.ghost:hover{background:rgba(255,255,255,.06);color:#fff}
+.seg{display:flex;gap:2px;padding:3px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07)}
+.seg button{flex:1;height:34px;border:none;border-radius:999px;background:transparent;color:#a8a8a8;font:inherit;font-size:13px;cursor:pointer}
+.seg button.on{color:#fff;background:radial-gradient(120% 160% at 30% 0%,rgba(255,255,255,.3),rgba(255,255,255,.07) 50%,rgba(255,255,255,.04));box-shadow:inset 0 0 0 1px rgba(255,255,255,.2),0 4px 12px rgba(0,0,0,.4)}
+.lbl{font-size:12px;color:#8f8f8f}
+.h2{margin:0;font-size:15px;font-weight:600}
+.row{display:flex;align-items:center;gap:14px;min-height:52px}
+.rng{-webkit-appearance:none;appearance:none;position:relative;width:100%;height:28px;background:transparent;margin:0;cursor:pointer}
+.rng::-webkit-slider-runnable-track{height:4px;background:transparent}
+.rng::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;margin-top:-8px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#fff 0 14%,rgba(255,255,255,.85) 45%,rgba(220,240,255,.7));box-shadow:inset 0 0 0 1px rgba(255,255,255,.6),0 0 0 4px rgba(92,200,255,.25),0 2px 6px rgba(0,0,0,.5);transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.rng:active::-webkit-slider-thumb{transform:scale(1.25)}
+.rng::-moz-range-track{height:4px;background:transparent}
+.rng::-moz-range-thumb{width:20px;height:20px;border:none;border-radius:50%;background:#fff}
+.sw{width:34px;height:34px;border:none;border-radius:50%;padding:0;cursor:pointer;flex:none;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.sw:active{transform:scale(1.15)}
+input::placeholder{color:#7d7d7d}
+@media (prefers-reduced-motion: reduce){.fl,.spin,.breath{animation:none!important}}
+</style>
+<style>html,body{min-height:100%}body{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px;box-sizing:border-box}</style>
+</head>
+<body>
+<div id="app"></div>
+<template id="dc-tpl">
+<div dir="{{dir}}" style="position: relative; width: 1080px; height: 680px; box-sizing: border-box; background: #000; color: #f5f5f5; font-family: 'IBM Plex Sans Arabic', 'Segoe UI', system-ui, sans-serif; border-radius: 12px; border: 1px solid rgba(255,255,255,0.09); overflow: hidden; display: flex; flex-direction: column">
+<div aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none">
+<div class="blob" style="width: 460px; height: 460px; top: -120px; inset-inline-end: 60px; background: radial-gradient(circle, {{b1}} 0, rgba(0,0,0,0) 70%); opacity: 0.55"></div>
+<div class="blob" style="width: 360px; height: 360px; top: 300px; inset-inline-start: -120px; background: radial-gradient(circle, {{b2}} 0, rgba(0,0,0,0) 70%); opacity: 0.35"></div>
+<div class="blob" style="width: 300px; height: 300px; bottom: -140px; inset-inline-end: 340px; background: radial-gradient(circle, {{b3}} 0, rgba(0,0,0,0) 70%); opacity: 0.3"></div>
+</div>
+<div style="position: relative; z-index: 2; height: 40px; flex: none; display: flex; align-items: center; justify-content: space-between; padding-inline-start: 16px">
+<div style="display: flex; align-items: center; gap: 10px">
+<div style="position: relative; width: 22px; height: 20px">
+<div class="sphere" style="position: absolute; width: 16px; height: 16px; top: 0; inset-inline-start: 0; background: radial-gradient(circle at 32% 26%, #fff 0 10%, rgba(255,255,255,0) 30%), radial-gradient(circle, #5cc8ff 0, #3a7bd5 70%, rgba(255,255,255,0.5) 98%)"></div>
+<div class="sphere" style="position: absolute; width: 9px; height: 9px; bottom: 0; inset-inline-end: 0"></div>
+</div>
+<span style="font-size: 13px; font-weight: 500; color: #d9d9d9">KaiSync</span>
+</div>
+<div style="display: flex">
+<button class="cap" aria-label="تصغير"><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M0 5h10" stroke="currentColor" stroke-width="1"/></svg></button>
+<button class="cap" aria-label="تكبير"><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><rect x="0.5" y="0.5" width="9" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1"/></svg></button>
+<button class="cap x" aria-label="إخفاء للأيقونة جنب الساعة"><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M0 0l10 10M10 0L0 10" stroke="currentColor" stroke-width="1"/></svg></button>
+</div>
+</div>
+<div style="position: relative; flex: 1; min-height: 0; display: flex">
+<nav aria-label="{{t.nav}}" style="position: relative; z-index: 2; width: 232px; flex: none; box-sizing: border-box; padding: 8px 14px 16px; display: flex; flex-direction: column; gap: 4px">
+<a class="nav cur" href="Main.html" aria-current="page"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg><span>{{t.home}}</span></a>
+<a class="nav" href="Games.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 11h4M8 9v4M15 12h.01M18 10h.01"/><path d="M17.3 5H6.7a4 4 0 0 0-3.96 3.4L2 14.6A3 3 0 0 0 7.2 17l1.3-1.5h7l1.3 1.5a3 3 0 0 0 5.2-2.4l-.74-6.2A4 4 0 0 0 17.3 5z"/></svg><span>{{t.games}}</span></a>
+<a class="nav" href="Settings.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>{{t.settings}}</span></a>
+<div style="flex: 1"></div>
+<div class="glass" style="padding: 14px; border-radius: 16px; display: flex; align-items: center; gap: 12px">
+<div class="sphere" style="position: relative; width: 36px; height: 36px; flex: none; overflow: hidden">
+<div style="position: absolute; inset: -20%; background: {{orbBg}}; filter: blur(6px); opacity: 0.6"></div>
+<div class="sphere" style="position: absolute; inset: 0; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.3)"></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 1px; min-width: 0">
+<span style="font-size: 13px; font-weight: 600">{{title}}</span>
+<span style="font-size: 12px; color: #8f8f8f; display: flex; align-items: center; gap: 6px"><span style="width: 6px; height: 6px; border-radius: 50%; background: {{autoDot}}"></span>{{autoText}}</span>
+</div>
+</div>
+</nav>
+<main style="position: relative; z-index: 2; flex: 1; min-width: 0; box-sizing: border-box; padding: 12px 28px 28px; padding-inline-start: 12px; display: flex; flex-direction: column; gap: 20px">
+<header style="display: flex; flex-direction: column; gap: 2px">
+<h1 style="margin: 0; font-size: 26px; font-weight: 600">{{t.home}}</h1>
+<p style="margin: 0; font-size: 13px; color: #9a9a9a">{{t.homeSub}}</p>
+</header>
+
+<section class="glass" style="position: relative; height: 244px; box-sizing: border-box; padding: 28px 32px; border-radius: 22px; display: flex; align-items: center; justify-content: space-between; gap: 24px; overflow: hidden">
+<div style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
+<span class="lbl" style="display: flex; align-items: center; gap: 8px"><span style="width: 7px; height: 7px; border-radius: 50%; background: {{autoDot}}"></span>{{t.now}}</span>
+<span style="font-size: 36px; font-weight: 700; line-height: 1.2">{{title}}</span>
+<span style="font-size: 15px; color: #a8a8a8">{{sub}}</span>
+<div style="display: flex; gap: 10px; margin-top: 14px">
+<button class="btn" aria-pressed="{{pausedStr}}" onClick="{{togglePause}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg>{{pauseLabel}}</button>
+<button class="btn ghost"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/></svg>{{t.forceColor}}</button>
+</div>
+</div>
+<div style="position: relative; width: 260px; height: 200px; flex: none; opacity: {{orbOpacity}}; transition: opacity .4s">
+<div class="sphere breath" style="position: absolute; inset-inline-start: 40px; top: 12px; width: 176px; height: 176px; overflow: hidden; animation: kbreath 6s ease-in-out infinite; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.3), 0 0 80px {{glow}}">
+<div class="spin" style="position: absolute; inset: -22%; background: {{orbBg}}; filter: blur(20px); opacity: 0.62; animation: kspin 18s linear infinite"></div>
+<div class="sphere" style="position: absolute; inset: 0; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.38), inset 0 -12px 24px rgba(255,255,255,0.1)"></div>
+</div>
+<div class="sphere fl" style="width: 46px; height: 46px; top: 0; inset-inline-start: 196px; animation-delay: -2s"></div>
+<div class="sphere fl" style="width: 26px; height: 26px; top: 158px; inset-inline-start: 18px; animation-delay: -5s"></div>
+<div class="sphere fl" style="width: 13px; height: 13px; top: 40px; inset-inline-start: 14px; animation-delay: -3s"></div>
+<div class="sphere fl" style="width: 10px; height: 10px; top: 184px; inset-inline-start: 222px; animation-delay: -1s"></div>
+</div>
+</section>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
+<div class="glass" style="padding: 18px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<div class="sphere" style="width: 40px; height: 40px; flex: none; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5cc8ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 13l3-5 2 3 2-2 3 4"/></svg></div>
+<span style="width: 8px; height: 8px; border-radius: 50%; background: {{hdrDot}}"></span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span class="lbl">{{t.hdr}}</span>
+<span style="font-size: 18px; font-weight: 600">{{hdr}}</span>
+<span style="font-size: 12px; color: #8f8f8f">{{t.hdrSub}}</span>
+</div>
+</div>
+<div class="glass" style="padding: 18px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<div class="sphere" style="width: 40px; height: 40px; flex: none; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffb84d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="6" width="16" height="9" rx="1.5"/><path d="M2 9v3M22 9v3M9 19h6"/></svg></div>
+<span style="width: 8px; height: 8px; border-radius: 50%; background: {{lightDot}}"></span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span class="lbl">{{t.light}}</span>
+<span style="font-size: 18px; font-weight: 600">{{light}}</span>
+<span style="font-size: 12px; color: #8f8f8f">DreamView T1 · H6199</span>
+</div>
+</div>
+<div class="glass" style="padding: 18px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<div class="sphere" style="width: 40px; height: 40px; flex: none; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9b8cff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7l10 10-5 4V3l5 4L7 17"/></svg></div>
+<span style="width: 8px; height: 8px; border-radius: 50%; background: {{connDot}}"></span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span class="lbl">{{t.conn}}</span>
+<span style="font-size: 18px; font-weight: 600">{{conn}}</span>
+<span style="font-size: 12px; color: #8f8f8f">{{t.connSub}}</span>
+</div>
+</div>
+</div>
+
+<section class="glass" style="padding: 16px 22px; display: flex; align-items: center; gap: 24px">
+<span class="lbl" style="flex: none">{{t.rules}}</span>
+<div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9b8cff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 11h4M8 9v4M15 12h.01M18 10h.01"/><path d="M17.3 5H6.7a4 4 0 0 0-3.96 3.4L2 14.6A3 3 0 0 0 7.2 17l1.3-1.5h7l1.3 1.5a3 3 0 0 0 5.2-2.4l-.74-6.2A4 4 0 0 0 17.3 5z"/></svg>
+<span style="font-size: 14px">{{t.rGame}}</span>
+<span style="color: #5f5f5f; display: flex; transform: scaleX({{arrowFlip}})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span>
+<span style="font-size: 13px; color: #bdbdbd">HDR + Video</span>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffb84d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l5 3.5-5 3.5z"/></svg>
+<span style="font-size: 14px">{{t.rVideo}}</span>
+<span style="color: #5f5f5f; display: flex; transform: scaleX({{arrowFlip}})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span>
+<span style="font-size: 13px; color: #bdbdbd">Video</span>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#bdbdbd" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>
+<span style="font-size: 14px">{{t.rIdle}}</span>
+<span style="color: #5f5f5f; display: flex; transform: scaleX({{arrowFlip}})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span>
+<span style="font-size: 13px; color: #bdbdbd">Color</span>
+</div>
+</section>
+</main>
+</div>
+</div>
+</template>
+<script type="text/plain" id="dc-logic">
+class Component extends DCLogic {
+  renderVals() {
+    const mode = this.props.mode ?? 'game';
+    const lang = this.props.lang ?? 'ar';
+    const paused = !!(this.state && this.state.paused);
+    const T = {
+      ar: { home: 'الرئيسية', games: 'الألعاب', settings: 'الإعدادات', nav: 'التنقل', homeSub: 'KaiSync يبدّل HDR والإضاءة تلقائياً حسب اللي شغّال.', now: 'الحالة الآن', auto: 'الأتمتة شغّالة', autoOff: 'موقفة مؤقتاً', pause: 'إيقاف مؤقت', resume: 'استئناف', forceColor: 'رجّع Color الحين', hdr: 'HDR', hdrSub: 'الشاشة الأساسية', light: 'الإضاءة', conn: 'الاتصال', connSub: 'يتصل ويفصل مع كل أمر', rules: 'القواعد', rGame: 'لعبة', rVideo: 'فيديو', rIdle: 'ولا شي', on: 'شغّال', off: 'طافي', ble: 'بلوتوث', pausedTitle: 'الأتمتة موقفة', pausedSub: 'HDR والإضاءة بيدك لين تستأنف',
+        modes: { game: ['وضع اللعب', 'Elden Ring'], video: ['وضع المتابعة', 'PotPlayer'], idle: ['وضع عادي', 'ما فيه لعبة أو فيديو شغّال'] } },
+      en: { home: 'Home', games: 'Games', settings: 'Settings', nav: 'Navigation', homeSub: 'KaiSync switches HDR and your lights based on what is running.', now: 'Right now', auto: 'Automation on', autoOff: 'Paused', pause: 'Pause', resume: 'Resume', forceColor: 'Set Color now', hdr: 'HDR', hdrSub: 'Primary display', light: 'Lights', conn: 'Connection', connSub: 'Connects per command', rules: 'Rules', rGame: 'Game', rVideo: 'Video', rIdle: 'Nothing', on: 'On', off: 'Off', ble: 'Bluetooth', pausedTitle: 'Automation paused', pausedSub: 'HDR and lights are yours until you resume',
+        modes: { game: ['Game mode', 'Elden Ring'], video: ['Watching mode', 'PotPlayer'], idle: ['Idle', 'No game or video running'] } }
+    };
+    const t = T[lang] || T.ar;
+    const P = {
+      game: { c: ['#5cc8ff', '#9b8cff', '#6ee7ff', '#5b6cff'], glow: 'rgba(92,170,255,0.30)', hdr: true, light: 'Video', b: ['#2f6fd6', '#6d4bd8', '#1f8fbf'] },
+      video: { c: ['#ffb84d', '#ff7aa8', '#ffd76a', '#ff9361'], glow: 'rgba(255,170,90,0.26)', hdr: false, light: 'Video', b: ['#c46a1f', '#b8406e', '#a07a1a'] },
+      idle: { c: ['#e8e8e8', '#8a8a8a', '#f5f5f5', '#5a5a5a'], glow: 'rgba(255,255,255,0.08)', hdr: false, light: 'Color', b: ['#3a3a3a', '#2a2a2a', '#333333'] }
+    };
+    const p = P[mode] || P.game;
+    const c = p.c;
+    const ts = t.modes[mode] || t.modes.game;
+    return {
+      t: t,
+      dir: lang === 'en' ? 'ltr' : 'rtl',
+      arrowFlip: lang === 'en' ? -1 : 1,
+      title: paused ? t.pausedTitle : ts[0],
+      sub: paused ? t.pausedSub : ts[1],
+      hdr: p.hdr ? t.on : t.off,
+      hdrDot: p.hdr ? '#4ade80' : '#555555',
+      light: p.light,
+      lightDot: '#4ade80',
+      conn: t.ble,
+      connDot: '#4ade80',
+      b1: p.b[0], b2: p.b[1], b3: p.b[2],
+      glow: paused ? 'rgba(0,0,0,0)' : p.glow,
+      orbBg: 'conic-gradient(from 0deg, ' + c[0] + ', ' + c[1] + ', ' + c[2] + ', ' + c[3] + ', ' + c[0] + ')',
+      orbOpacity: paused ? 0.35 : 1,
+      autoDot: paused ? '#ffb84d' : '#4ade80',
+      autoText: paused ? t.autoOff : t.auto,
+      pauseLabel: paused ? t.resume : t.pause,
+      pausedStr: paused ? 'true' : 'false',
+      togglePause: () => this.setState({ paused: !paused })
+    };
+  }
+}
+</script>
+<script>
+(function () {
+  class DCLogic {
+    constructor(props) { this.props = props; this.state = null; }
+    setState(p) { this.state = Object.assign({}, this.state || {}, p); render(); }
+    forceUpdate() { render(); }
+  }
+  const params = new URLSearchParams(location.search);
+  const props = {};
+  params.forEach((v, k) => { props[k] = v; });
+  const code = document.getElementById('dc-logic').textContent;
+  const Component = new Function('DCLogic', code + '\nreturn Component;')(DCLogic);
+  const comp = new Component(props);
+  const tpl = document.getElementById('dc-tpl');
+  const app = document.getElementById('app');
+  const HOLE = /\{\{\s*([^}]+?)\s*\}\}/g;
+  function look(path, ctx) {
+    path = path.trim();
+    if (path === 'true') return true;
+    if (path === 'false') return false;
+    if (/^-?\d+(\.\d+)?$/.test(path)) return Number(path);
+    let v = ctx;
+    for (const part of path.split('.')) { if (v == null) return undefined; v = v[part]; }
+    return v;
+  }
+  function interp(s, ctx) { return s.replace(HOLE, (_, p) => { const v = look(p, ctx); return v == null ? '' : String(v); }); }
+  function walk(node, ctx) {
+    if (node.nodeType === 3) { if (node.nodeValue.indexOf('{{') >= 0) node.nodeValue = interp(node.nodeValue, ctx); return; }
+    if (node.nodeType !== 1) return;
+    const tag = node.tagName.toLowerCase();
+    if (tag === 'sc-for') {
+      const list = look(node.getAttribute('list').replace(/^\{\{|\}\}$/g, ''), ctx) || [];
+      const as = node.getAttribute('as') || 'item';
+      const frag = document.createDocumentFragment();
+      list.forEach((item, i) => {
+        const c = Object.create(ctx); c[as] = item; c.$index = i;
+        Array.from(node.childNodes).forEach((ch) => { const cl = ch.cloneNode(true); frag.appendChild(cl); walk(cl, c); });
+      });
+      node.replaceWith(frag); return;
+    }
+    if (tag === 'sc-if') {
+      const v = look(node.getAttribute('value').replace(/^\{\{|\}\}$/g, ''), ctx);
+      if (!v) { node.remove(); return; }
+      const kids = Array.from(node.childNodes);
+      node.replaceWith(...kids); kids.forEach((k) => walk(k, ctx)); return;
+    }
+    Array.from(node.attributes).forEach((a) => {
+      if (a.value.indexOf('{{') < 0) return;
+      const whole = a.value.match(/^\{\{\s*([^}]+?)\s*\}\}$/);
+      if (/^on[a-z]/i.test(a.name) && whole) {
+        const fn = look(whole[1], ctx); node.removeAttribute(a.name);
+        let ev = a.name.slice(2).toLowerCase(); if (ev === 'change' && node.tagName === 'INPUT' && node.type === 'range') ev = 'input';
+        if (typeof fn === 'function') node.addEventListener(ev, fn);
+        return;
+      }
+      const val = interp(a.value, ctx);
+      node.setAttribute(a.name, val);
+      if (a.name === 'value' && 'value' in node) node.value = val;
+    });
+    Array.from(node.childNodes).forEach((ch) => walk(ch, ctx));
+  }
+  function render() {
+    const vals = comp.renderVals() || {};
+    const frag = tpl.content.cloneNode(true);
+    Array.from(frag.childNodes).forEach((n) => walk(n, vals));
+    app.replaceChildren(frag);
+  }
+  render();
+})();
+</script>
+</body>
+</html>

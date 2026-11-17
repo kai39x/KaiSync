@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KaiSync — قائمة الأيقونة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#000}
+a{color:#f5f5f5}a:hover{color:#ffffff}
+@keyframes kspin{to{transform:rotate(360deg)}}
+@keyframes kfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes kbreath{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}
+.glass{background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.028));backdrop-filter:blur(28px) saturate(160%);-webkit-backdrop-filter:blur(28px) saturate(160%);border:1px solid rgba(255,255,255,.09);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 14px 34px rgba(0,0,0,.35);border-radius:18px}
+.sphere{border-radius:50%;background:radial-gradient(circle at 32% 26%,rgba(255,255,255,.95) 0 5%,rgba(255,255,255,0) 20%),radial-gradient(circle at 68% 80%,rgba(255,255,255,.16),rgba(255,255,255,0) 30%),radial-gradient(circle at 50% 50%,rgba(255,255,255,.02) 50%,rgba(255,255,255,.11) 76%,rgba(255,255,255,.42) 97%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.26),0 6px 18px rgba(0,0,0,.5)}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);pointer-events:none}
+.fl{position:absolute;animation:kfloat 8s ease-in-out infinite}
+.nav{display:flex;align-items:center;gap:12px;height:44px;padding:0 14px;border-radius:12px;color:#b0b0b0;text-decoration:none;font-size:14px;position:relative;transition:background .2s}
+.nav:hover{background:rgba(255,255,255,.05);color:#fff}
+.nav.cur{background:linear-gradient(180deg,rgba(255,255,255,.11),rgba(255,255,255,.05));color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.1),inset 0 0 0 1px rgba(255,255,255,.06)}
+.nav.cur::before{content:"";position:absolute;inset-inline-start:-6px;top:50%;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#fff 0 14%,#7fd3ff 48%,#2e9fe0 100%);box-shadow:0 0 12px rgba(92,200,255,.8)}
+.cap{width:46px;height:40px;border:none;background:transparent;color:#cfcfcf;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.cap:hover{background:rgba(255,255,255,.08)}
+.cap.x:hover{background:#c42b1c;color:#fff}
+.tg{position:relative;width:44px;height:24px;border-radius:999px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.03);padding:0;cursor:pointer;flex:none;transition:background .2s,border-color .2s}
+.tg .k{position:absolute;top:3px;inset-inline-start:3px;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#fff 0 14%,rgba(255,255,255,.8) 46%,rgba(255,255,255,.55));box-shadow:0 1px 3px rgba(0,0,0,.45);transition:inset-inline-start .32s cubic-bezier(.34,1.56,.64,1),transform .2s cubic-bezier(.34,1.56,.64,1)}
+.tg.on{background:#5cc8ff;border-color:#5cc8ff}
+.tg.on .k{inset-inline-start:23px;background:radial-gradient(circle at 32% 28%,#fff 0 16%,rgba(255,255,255,.92) 48%,rgba(214,240,255,.85))}
+.tg:active .k{transform:scale(1.3)}
+.tg:focus-visible,.btn:focus-visible,.nav:focus-visible,.seg button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.btn{height:40px;padding:0 18px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg,rgba(255,255,255,.13),rgba(255,255,255,.05));color:#fff;font:inherit;font-size:13.5px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;box-shadow:inset 0 1px 0 rgba(255,255,255,.16);white-space:nowrap;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.btn:hover{background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.08))}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:radial-gradient(120% 140% at 30% 0%,rgba(255,255,255,.55),rgba(255,255,255,0) 50%),linear-gradient(180deg,#7fd6ff,#38b0f0);color:#00131d;border-color:transparent;font-weight:600;box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 6px 20px rgba(92,200,255,.22)}
+.btn.ghost{background:transparent;border-color:transparent;box-shadow:none;color:#cfcfcf}
+.btn.ghost:hover{background:rgba(255,255,255,.06);color:#fff}
+.seg{display:flex;gap:2px;padding:3px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07)}
+.seg button{flex:1;height:34px;border:none;border-radius:999px;background:transparent;color:#a8a8a8;font:inherit;font-size:13px;cursor:pointer}
+.seg button.on{color:#fff;background:radial-gradient(120% 160% at 30% 0%,rgba(255,255,255,.3),rgba(255,255,255,.07) 50%,rgba(255,255,255,.04));box-shadow:inset 0 0 0 1px rgba(255,255,255,.2),0 4px 12px rgba(0,0,0,.4)}
+.lbl{font-size:12px;color:#8f8f8f}
+.h2{margin:0;font-size:15px;font-weight:600}
+.row{display:flex;align-items:center;gap:14px;min-height:52px}
+.rng{-webkit-appearance:none;appearance:none;position:relative;width:100%;height:28px;background:transparent;margin:0;cursor:pointer}
+.rng::-webkit-slider-runnable-track{height:4px;background:transparent}
+.rng::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;margin-top:-8px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#fff 0 14%,rgba(255,255,255,.85) 45%,rgba(220,240,255,.7));box-shadow:inset 0 0 0 1px rgba(255,255,255,.6),0 0 0 4px rgba(92,200,255,.25),0 2px 6px rgba(0,0,0,.5);transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.rng:active::-webkit-slider-thumb{transform:scale(1.25)}
+.rng::-moz-range-track{height:4px;background:transparent}
+.rng::-moz-range-thumb{width:20px;height:20px;border:none;border-radius:50%;background:#fff}
+.sw{width:34px;height:34px;border:none;border-radius:50%;padding:0;cursor:pointer;flex:none;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.sw:active{transform:scale(1.15)}
+input::placeholder{color:#7d7d7d}
+@media (prefers-reduced-motion: reduce){.fl,.spin,.breath{animation:none!important}}
+</style>
+<style>html,body{min-height:100%}body{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px;box-sizing:border-box}</style>
+</head>
+<body>
+<div id="app"></div>
+<template id="dc-tpl">
+<div dir="rtl" style="position: relative; width: 340px; height: 380px; box-sizing: border-box; background: #000; color: #f5f5f5; font-family: 'IBM Plex Sans Arabic', 'Segoe UI', system-ui, sans-serif; overflow: hidden; display: flex; align-items: center; justify-content: center">
+<div aria-hidden="true" class="blob" style="width: 300px; height: 300px; top: -40px; inset-inline-start: -40px; background: radial-gradient(circle, #2f6fd6 0, rgba(0,0,0,0) 70%); opacity: 0.5"></div>
+<div aria-hidden="true" class="blob" style="width: 240px; height: 240px; bottom: -40px; inset-inline-end: -20px; background: radial-gradient(circle, #6d4bd8 0, rgba(0,0,0,0) 70%); opacity: 0.4"></div>
+<div role="menu" aria-label="KaiSync" class="glass" style="position: relative; width: 280px; box-sizing: border-box; padding: 8px; border-radius: 16px; display: flex; flex-direction: column; gap: 2px">
+<div style="display: flex; align-items: center; gap: 12px; padding: 10px">
+<div class="sphere" style="position: relative; width: 38px; height: 38px; flex: none; overflow: hidden">
+<div style="position: absolute; inset: -20%; background: conic-gradient(#5cc8ff, #9b8cff, #6ee7ff, #5b6cff, #5cc8ff); filter: blur(6px); opacity: 0.6"></div>
+<div class="sphere" style="position: absolute; inset: 0"></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 1px; min-width: 0">
+<span style="font-size: 14px; font-weight: 600">وضع اللعب</span>
+<span style="font-size: 12px; color: #9a9a9a">Elden Ring · HDR + Video</span>
+</div>
+</div>
+<div style="height: 1px; background: rgba(255,255,255,0.08); margin: 2px 8px 4px"></div>
+<button class="nav" role="menuitem" style="border: none; background: transparent; font: inherit; font-size: 14px; cursor: pointer; text-align: start"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 8h18"/></svg>فتح KaiSync</button>
+<button class="nav" role="menuitem" style="border: none; background: transparent; font: inherit; font-size: 14px; cursor: pointer; text-align: start"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg>إيقاف مؤقت</button>
+<button class="nav" role="menuitem" style="border: none; background: transparent; font: inherit; font-size: 14px; cursor: pointer; text-align: start"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/></svg>رجّع الإضاءة Color الحين</button>
+<div style="height: 1px; background: rgba(255,255,255,0.08); margin: 4px 8px"></div>
+<button class="nav" role="menuitem" style="border: none; background: transparent; font: inherit; font-size: 14px; cursor: pointer; text-align: start; color: #ff9b9b"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v8"/><path d="M6.3 7.3a8 8 0 1 0 11.4 0"/></svg>خروج</button>
+</div>
+</div>
+</template>
+<script type="text/plain" id="dc-logic">
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+<script>
+(function () {
+  class DCLogic {
+    constructor(props) { this.props = props; this.state = null; }
+    setState(p) { this.state = Object.assign({}, this.state || {}, p); render(); }
+    forceUpdate() { render(); }
+  }
+  const params = new URLSearchParams(location.search);
+  const props = {};
+  params.forEach((v, k) => { props[k] = v; });
+  const code = document.getElementById('dc-logic').textContent;
+  const Component = new Function('DCLogic', code + '\nreturn Component;')(DCLogic);
+  const comp = new Component(props);
+  const tpl = document.getElementById('dc-tpl');
+  const app = document.getElementById('app');
+  const HOLE = /\{\{\s*([^}]+?)\s*\}\}/g;
+  function look(path, ctx) {
+    path = path.trim();
+    if (path === 'true') return true;
+    if (path === 'false') return false;
+    if (/^-?\d+(\.\d+)?$/.test(path)) return Number(path);
+    let v = ctx;
+    for (const part of path.split('.')) { if (v == null) return undefined; v = v[part]; }
+    return v;
+  }
+  function interp(s, ctx) { return s.replace(HOLE, (_, p) => { const v = look(p, ctx); return v == null ? '' : String(v); }); }
+  function walk(node, ctx) {
+    if (node.nodeType === 3) { if (node.nodeValue.indexOf('{{') >= 0) node.nodeValue = interp(node.nodeValue, ctx); return; }
+    if (node.nodeType !== 1) return;
+    const tag = node.tagName.toLowerCase();
+    if (tag === 'sc-for') {
+      const list = look(node.getAttribute('list').replace(/^\{\{|\}\}$/g, ''), ctx) || [];
+      const as = node.getAttribute('as') || 'item';
+      const frag = document.createDocumentFragment();
+      list.forEach((item, i) => {
+        const c = Object.create(ctx); c[as] = item; c.$index = i;
+        Array.from(node.childNodes).forEach((ch) => { const cl = ch.cloneNode(true); frag.appendChild(cl); walk(cl, c); });
+      });
+      node.replaceWith(frag); return;
+    }
+    if (tag === 'sc-if') {
+      const v = look(node.getAttribute('value').replace(/^\{\{|\}\}$/g, ''), ctx);
+      if (!v) { node.remove(); return; }
+      const kids = Array.from(node.childNodes);
+      node.replaceWith(...kids); kids.forEach((k) => walk(k, ctx)); return;
+    }
+    Array.from(node.attributes).forEach((a) => {
+      if (a.value.indexOf('{{') < 0) return;
+      const whole = a.value.match(/^\{\{\s*([^}]+?)\s*\}\}$/);
+      if (/^on[a-z]/i.test(a.name) && whole) {
+        const fn = look(whole[1], ctx); node.removeAttribute(a.name);
+        let ev = a.name.slice(2).toLowerCase(); if (ev === 'change' && node.tagName === 'INPUT' && node.type === 'range') ev = 'input';
+        if (typeof fn === 'function') node.addEventListener(ev, fn);
+        return;
+      }
+      const val = interp(a.value, ctx);
+      node.setAttribute(a.name, val);
+      if (a.name === 'value' && 'value' in node) node.value = val;
+    });
+    Array.from(node.childNodes).forEach((ch) => walk(ch, ctx));
+  }
+  function render() {
+    const vals = comp.renderVals() || {};
+    const frag = tpl.content.cloneNode(true);
+    Array.from(frag.childNodes).forEach((n) => walk(n, vals));
+    app.replaceChildren(frag);
+  }
+  render();
+})();
+</script>
+</body>
+</html>
