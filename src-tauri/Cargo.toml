@@ -1,6 +1,6 @@
 [package]
 name = "kaisync"
-version = "0.1.0"
+version = "1.0.0"
 description = "Automatic Windows HDR switcher"
 edition = "2021"
 

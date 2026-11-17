@@ -28,11 +28,14 @@ pub fn set_autostart(app: &AppHandle, on: bool) {
         return;
     }
     let al = app.autolaunch();
-    let now = al.is_enabled().unwrap_or(false);
-    let r = match (on, now) {
-        (true, false) => al.enable(),
-        (false, true) => al.disable(),
-        _ => Ok(()),
+    let r = if on {
+        // Always (re)write it: the entry must point at *this* exe, e.g. after moving from a
+        // portable copy or a dev build to the installed one.
+        al.enable()
+    } else if al.is_enabled().unwrap_or(false) {
+        al.disable()
+    } else {
+        Ok(())
     };
     match r {
         Ok(()) => tracing::info!("autostart: {}", if on { "on" } else { "off" }),
