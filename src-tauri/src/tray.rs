@@ -21,11 +21,11 @@ pub const MENU_LABEL: &str = "tray-menu";
 const MENU_W: f64 = 296.0;
 const MENU_H: f64 = 246.0;
 
-fn modes(lang: &str) -> [&'static str; 3] {
+fn modes(lang: &str) -> [&'static str; 4] {
     if lang == "en" {
-        ["Idle", "Game mode", "Paused"]
+        ["Idle", "Game mode", "Paused", "Watching mode"]
     } else {
-        ["وضع عادي", "وضع اللعب", "الأتمتة موقفة"]
+        ["وضع عادي", "وضع اللعب", "الأتمتة موقفة", "وضع المتابعة"]
     }
 }
 
@@ -126,6 +126,7 @@ pub fn update(app: &AppHandle, st: &Status) {
             match st.mode {
                 Mode::Idle => m[0],
                 Mode::Game => m[1],
+                Mode::Video => m[3],
             }
         };
         let tip = match (&st.detail, st.paused) {
@@ -148,6 +149,7 @@ pub fn orb_icon(mode: Mode, paused: bool) -> Image<'static> {
     } else {
         match mode {
             Mode::Game => [0x5cc8ff, 0x9b8cff, 0x6ee7ff, 0x5b6cff],
+            Mode::Video => [0xffb84d, 0xff7aa8, 0xffd76a, 0xff9361],
             Mode::Idle => [0xe8e8e8, 0x8a8a8a, 0xf5f5f5, 0x5a5a5a],
         }
     };

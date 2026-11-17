@@ -9,7 +9,7 @@ async function invoke<T>(cmd: string, args?: Record<string, unknown>): Promise<T
   return mockInvoke<T>(cmd, args);
 }
 
-export type Mode = "idle" | "game";
+export type Mode = "idle" | "video" | "game";
 export type Source = "steam" | "epic" | "xbox" | "folder" | "manual";
 
 export interface HdrStatus {
@@ -17,6 +17,7 @@ export interface HdrStatus {
   supported: boolean;
   on: boolean;
   onByKaisync: boolean;
+  offByKaisync: boolean;
 }
 
 export interface Status {
@@ -58,9 +59,16 @@ export interface FolderReport {
   needsPick: number;
 }
 
+export interface PlayerInfo {
+  name: string;
+  path: string;
+  exists: boolean;
+}
+
 export interface LibraryView {
   games: Game[];
   folders: FolderReport[];
+  player: PlayerInfo | null;
 }
 
 export interface Settings {
@@ -71,6 +79,7 @@ export interface Settings {
   manualGames: { path: string; name: string }[];
   gameEnabled: Record<string, boolean>;
   hdrDisplay: string | null;
+  playerPath: string | null;
   autostart: boolean;
   desktopShortcut: boolean;
   debounceMs: number;
@@ -94,6 +103,7 @@ export const api = {
   removeManualGame: (path: string) => invoke<Settings>("remove_manual_game", { path }),
   setGameEnabled: (id: string, enabled: boolean) => invoke<Settings>("set_game_enabled", { id, enabled }),
   pickFolderExe: (id: string, exe: string) => invoke<Settings>("pick_folder_exe", { id, exe }),
+  setPlayer: (path: string) => invoke<Settings>("set_player", { path }),
   setLanguage: (language: string) => invoke<Settings>("set_language", { language }),
   setGeneral: (key: "autostart" | "desktopShortcut", value: boolean) => invoke<Settings>("set_general", { key, value }),
   openLogsFolder: () => invoke<void>("open_logs_folder"),

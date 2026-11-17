@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { api } from "../api";
 import { Button, Dot, Glass, Sphere, StatusOrb } from "../components/ui";
-import { IconChevron, IconGamepad, IconHdr, IconMonitor, IconPause, IconPlay, IconRestore } from "../components/ui/icons";
+import { IconChevron, IconGamepad, IconHdr, IconMonitor, IconPause, IconPlay, IconPlayCircle, IconRestore } from "../components/ui/icons";
 import { useStore } from "../state/store";
 import s from "./screens.module.css";
 
@@ -14,7 +14,7 @@ export function Home() {
   const hdr = status?.hdr;
 
   const title = paused ? t("modes.paused") : t(`modes.${mode}`);
-  const sub = paused ? t("home.pausedSub") : mode === "game" ? (status?.detail ?? "") : t("home.idleSub");
+  const sub = paused ? t("home.pausedSub") : mode === "idle" ? t("home.idleSub") : (status?.detail ?? "");
   const enabledGames = library?.games.filter((g) => g.enabled && !g.needsPick).length ?? 0;
 
   return (
@@ -80,12 +80,16 @@ export function Home() {
         <Glass className={s.stat}>
           <div className={s.statTop}>
             <Sphere size={40}><IconRestore color="#ffb84d" /></Sphere>
-            <Dot color={hdr?.onByKaisync ? "var(--accent)" : "var(--off)"} />
+            <Dot color={hdr?.onByKaisync || hdr?.offByKaisync ? "var(--accent)" : "var(--off)"} />
           </div>
           <div className={s.statBody}>
             <span className="lbl">{t("home.restore")}</span>
-            <span className={s.statValue}>{hdr?.onByKaisync ? t("home.restoreOurs") : t("home.restoreYours")}</span>
-            <span className={`${s.statSub} ${s.ellipsis}`}>{hdr?.onByKaisync ? t("home.restoreOursSub") : t("home.restoreYoursSub")}</span>
+            <span className={s.statValue}>
+              {hdr?.onByKaisync ? t("home.restoreOurs") : hdr?.offByKaisync ? t("home.restoreOn") : t("home.restoreYours")}
+            </span>
+            <span className={`${s.statSub} ${s.ellipsis}`}>
+              {hdr?.onByKaisync ? t("home.restoreOursSub") : hdr?.offByKaisync ? t("home.restoreOnSub") : t("home.restoreYoursSub")}
+            </span>
           </div>
         </Glass>
       </div>
@@ -97,6 +101,12 @@ export function Home() {
           <span className={s.ruleName}>{t("home.rGame")}</span>
           <span className={s.ruleArrow}><IconChevron size={14} /></span>
           <span className={s.ruleDo}>{t("home.rGameDo")}</span>
+        </div>
+        <div className={s.rule}>
+          <IconPlayCircle color="#ffb84d" />
+          <span className={s.ruleName}>{t("home.rVideo")}</span>
+          <span className={s.ruleArrow}><IconChevron size={14} /></span>
+          <span className={s.ruleDo}>{t("home.rVideoDo")}</span>
         </div>
         <div className={s.rule}>
           <IconMonitor color="#bdbdbd" />

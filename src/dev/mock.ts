@@ -2,7 +2,8 @@
 import type { DisplaysView, LibraryView, Settings, Status } from "../api";
 
 const params = new URLSearchParams(location.search);
-const mode = params.get("mode") === "game" ? "game" : "idle";
+const m = params.get("mode");
+const mode = m === "game" ? "game" : m === "video" ? "video" : "idle";
 
 let settings: Settings = {
   language: params.get("lang") === "en" ? "en" : "ar",
@@ -12,6 +13,7 @@ let settings: Settings = {
   manualGames: [{ path: "C:\\Emu\\Cemu\\Cemu.exe", name: "Cemu" }],
   gameEnabled: {},
   hdrDisplay: null,
+  playerPath: null,
   autostart: true,
   desktopShortcut: true,
   debounceMs: 3000,
@@ -19,12 +21,12 @@ let settings: Settings = {
 
 const status: Status = {
   mode,
-  detail: mode === "game" ? "Elden Ring" : null,
+  detail: mode === "game" ? "Elden Ring" : mode === "video" ? "PotPlayer" : null,
   paused: params.get("paused") === "1",
   rawMode: mode,
   rawDetail: null,
   scanning: false,
-  hdr: { display: "Beyond TV", supported: true, on: mode === "game", onByKaisync: mode === "game" },
+  hdr: { display: "Beyond TV", supported: true, on: mode === "game", onByKaisync: mode === "game", offByKaisync: mode === "video" },
 };
 
 const root = "C:\\Users\\Kai\\Pictures\\games";
@@ -39,6 +41,7 @@ const library: LibraryView = {
     { id: "steam:431960", name: "Wallpaper Engine", source: "steam", installDir: "C:\\Program Files (x86)\\Steam\\steamapps\\common\\wallpaper_engine", exe: null, candidates: [], needsPick: false, defaultEnabled: false, enabled: false, folderRoot: null },
   ],
   folders: [{ path: root, exists: true, games: 2, needsPick: 1 }],
+  player: { name: "PotPlayer", path: "C:\\Program Files\\DAUM\\PotPlayer\\PotPlayerMini64.exe", exists: true },
 };
 
 const displays: DisplaysView = {

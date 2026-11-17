@@ -108,6 +108,7 @@ pub fn run() {
             commands::pick_folder_exe,
             commands::set_language,
             commands::set_general,
+            commands::set_player,
             commands::open_logs_folder,
             commands::list_displays,
             commands::set_hdr_display,

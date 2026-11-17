@@ -80,3 +80,9 @@ export const IconTrash = (p: P) => (
 export const IconCheck = (p: P) => (
   <Svg {...p}><path d="M5 12l5 5 9-10" /></Svg>
 );
+export const IconPlayCircle = (p: P) => (
+  <Svg {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M10 8.5l5 3.5-5 3.5z" />
+  </Svg>
+);

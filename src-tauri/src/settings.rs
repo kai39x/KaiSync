@@ -44,6 +44,8 @@ pub struct Settings {
     pub game_enabled: BTreeMap<String, bool>,
     /// HDR display to control (monitor device path). `None` = primary HDR display.
     pub hdr_display: Option<String>,
+    /// The one video player. `None` = auto-detect PotPlayer.
+    pub player_path: Option<String>,
     /// Start with Windows (tray only). Applied to the system in milestone 6.
     pub autostart: bool,
     /// Desktop shortcut. Applied to the system in milestone 6.
@@ -61,6 +63,7 @@ impl Default for Settings {
             manual_games: Vec::new(),
             game_enabled: BTreeMap::new(),
             hdr_display: None,
+            player_path: None,
             autostart: true,
             desktop_shortcut: true,
             debounce_ms: 3000,

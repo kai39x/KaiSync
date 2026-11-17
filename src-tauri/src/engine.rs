@@ -46,7 +46,7 @@ pub enum Cmd {
 pub struct Status {
     /// The applied mode.
     pub mode: Mode,
-    /// Game name for the applied mode.
+    /// Game name / player name for the applied mode.
     pub detail: Option<String>,
     pub paused: bool,
     /// What is running right now (before debouncing).
@@ -278,7 +278,7 @@ impl Worker {
         }
     }
 
-    /// One process scan -> raw mode (Game or Idle) + game name.
+    /// One process scan -> raw mode (Game > Video > Idle) + detail.
     fn detect(&mut self, sys: &mut System) -> (Mode, Option<String>) {
         sys.refresh_processes_specifics(
             ProcessesToUpdate::All,
@@ -289,6 +289,7 @@ impl Worker {
         let lib = library.read().unwrap();
         let mut alive = HashSet::new();
         let mut games: Vec<String> = Vec::new();
+        let mut player = false;
 
         for (pid, proc_) in sys.processes() {
             let key = (*pid, proc_.start_time());
@@ -304,6 +305,7 @@ impl Worker {
             });
             match hit {
                 Some(Hit::Game { name, .. }) => games.push(name.clone()),
+                Some(Hit::Player) => player = true,
                 None => {}
             }
         }
@@ -315,6 +317,9 @@ impl Worker {
             games.sort();
             let name = cur.filter(|c| games.contains(c)).unwrap_or_else(|| games[0].clone());
             return (Mode::Game, Some(name));
+        }
+        if player {
+            return (Mode::Video, lib.player.as_ref().map(|p| p.name.clone()));
         }
         (Mode::Idle, None)
     }
@@ -378,13 +383,25 @@ impl Worker {
         // The game vanished before it was confirmed (splash, quick restart): restore HDR.
         if let Some(seen) = self.early_hdr {
             if raw != Mode::Game && now.duration_since(seen) >= self.debouncer.hold() {
-                tracing::info!("game gone before confirmation: restoring HDR");
+                tracing::info!("game gone before confirmation: back to the current mode's HDR");
                 self.early_hdr = None;
-                let chosen = self.hdr_choice();
-                self.hdr.restore(chosen.as_deref());
+                let mode = self.debouncer.applied().unwrap_or(Mode::Idle);
+                self.hdr_for(mode);
                 self.refresh_hdr();
                 self.publish();
             }
+        }
+    }
+
+    /// The HDR state each mode wants.
+    fn hdr_for(&mut self, mode: Mode) {
+        let chosen = self.hdr_choice();
+        match mode {
+            Mode::Game => self.hdr.ensure_on(chosen.as_deref()),
+            // Watching: HDR off (back on afterwards if KaiSync was the one who turned it off).
+            Mode::Video => self.hdr.ensure_off(chosen.as_deref()),
+            // Nothing running: undo whatever KaiSync changed.
+            Mode::Idle => self.hdr.restore(chosen.as_deref()),
         }
     }
 
@@ -408,12 +425,7 @@ impl Worker {
     fn apply(&mut self, mode: Mode, detail: Option<String>, why: &str) {
         tracing::info!("APPLY {:?} {} [{}]", mode, detail.as_deref().unwrap_or(""), why);
         self.early_hdr = None;
-        let chosen = self.hdr_choice();
-        match mode {
-            Mode::Game => self.hdr.ensure_on(chosen.as_deref()),
-            // Game closed (or nothing to do): turn HDR off only if KaiSync turned it on.
-            Mode::Idle => self.hdr.restore(chosen.as_deref()),
-        }
+        self.hdr_for(mode);
         self.refresh_hdr();
         {
             let mut st = self.status.lock().unwrap();

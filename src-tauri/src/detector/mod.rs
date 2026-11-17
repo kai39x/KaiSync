@@ -1,4 +1,4 @@
-//! Game detection.
+//! Game + video-player detection.
 //!
 //! `build_library` scans every enabled source and produces a [`Library`]: the list of
 //! known games (for the UI) plus a [`Matcher`] that classifies a running process.
@@ -6,6 +6,7 @@
 pub mod epic;
 pub mod folders;
 pub mod ignore;
+pub mod player;
 pub mod steam;
 pub mod xbox;
 
@@ -78,10 +79,19 @@ pub struct FolderReport {
     pub needs_pick: usize,
 }
 
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PlayerInfo {
+    pub name: String,
+    pub path: String,
+    pub exists: bool,
+}
+
 /// What a process was classified as.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Hit {
     Game { id: String, name: String },
+    Player,
 }
 
 #[derive(Debug, Default)]
@@ -92,12 +102,15 @@ pub struct Matcher {
     exe_rules: HashMap<String, usize>,
     /// lowercase exe file name -> game index (fallback when the process path is unreadable)
     name_rules: HashMap<String, usize>,
+    player_path: Option<String>,
+    player_name: Option<String>,
 }
 
 #[derive(Debug, Default)]
 pub struct Library {
     pub games: Vec<Game>,
     pub folders: Vec<FolderReport>,
+    pub player: Option<PlayerInfo>,
     pub matcher: Matcher,
 }
 
@@ -118,7 +131,7 @@ fn file_name_lower(p: &Path) -> Option<String> {
 }
 
 impl Matcher {
-    fn build(games: &[Game]) -> Self {
+    fn build(games: &[Game], player: &Path) -> Self {
         let mut m = Matcher::default();
         for (i, g) in games.iter().enumerate() {
             if !g.enabled || g.needs_pick {
@@ -139,6 +152,11 @@ impl Matcher {
         }
         // Longest dir first so nested installs resolve to the most specific game.
         m.dir_rules.sort_by(|a, b| b.0.len().cmp(&a.0.len()));
+        // Full path when we know it; a bare exe name matches by name only.
+        if player.is_absolute() {
+            m.player_path = Some(norm(player));
+        }
+        m.player_name = file_name_lower(player);
         m
     }
 
@@ -153,6 +171,11 @@ impl Matcher {
         };
         match exe {
             Some(exe) => {
+                if self.player_path.as_deref() == Some(exe)
+                    || (self.player_path.is_none() && self.player_name.as_deref() == Some(name))
+                {
+                    return Some(Hit::Player);
+                }
                 if let Some(&i) = self.exe_rules.get(exe) {
                     return game(i);
                 }
@@ -161,7 +184,13 @@ impl Matcher {
                 }
                 None
             }
-            None => self.name_rules.get(name).and_then(|&i| game(i)),
+            None => {
+                // Path unreadable: match the player by its exe name.
+                if self.player_name.as_deref() == Some(name) {
+                    return Some(Hit::Player);
+                }
+                self.name_rules.get(name).and_then(|&i| game(i))
+            }
         }
     }
 }
@@ -204,11 +233,17 @@ pub fn build_library(settings: &Settings) -> Library {
     }
     games.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
 
-    let matcher = Matcher::build(&games);
+    let player_path = player::resolve(settings);
+    let player = Some(PlayerInfo {
+        name: player::display_name(&player_path),
+        path: player_path.to_string_lossy().into_owned(),
+        exists: player_path.exists(),
+    });
+    let matcher = Matcher::build(&games, &player_path);
 
     let count = |s: Source| games.iter().filter(|g| g.source == s).count();
     tracing::info!(
-        "library: {} games (steam {}, epic {}, xbox {}, folder {}, manual {}), {} need a pick [{} ms]",
+        "library: {} games (steam {}, epic {}, xbox {}, folder {}, manual {}), {} need a pick, player = {:?} [{} ms]",
         games.len(),
         count(Source::Steam),
         count(Source::Epic),
@@ -216,6 +251,7 @@ pub fn build_library(settings: &Settings) -> Library {
         count(Source::Folder),
         count(Source::Manual),
         games.iter().filter(|g| g.needs_pick).count(),
+        player.as_ref().map(|p| &p.path),
         started.elapsed().as_millis()
     );
     for g in &games {
@@ -230,5 +266,5 @@ pub fn build_library(settings: &Settings) -> Library {
         );
     }
 
-    Library { games, folders, matcher }
+    Library { games, folders, player, matcher }
 }

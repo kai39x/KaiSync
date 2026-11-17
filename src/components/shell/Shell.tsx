@@ -2,7 +2,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { useTranslation } from "react-i18next";
 import type { CSSProperties, ReactNode } from "react";
-import { Dot, Glass, MiniOrb, PALETTE, Sphere } from "../ui";
+import { Dot, Glass, MiniOrb, PALETTE, Sphere, type OrbMode } from "../ui";
 import { IconGamepad, IconHome, IconSliders } from "../ui/icons";
 import { useStore } from "../../state/store";
 import { inTauri } from "../../api";
@@ -55,7 +55,7 @@ function TitleBar() {
 /* ---------- Light bubbles ---------- */
 type Blob = { size: number; color: string; opacity: number; pos: CSSProperties };
 
-function blobsFor(page: Page, mode: "game" | "idle"): Blob[] {
+function blobsFor(page: Page, mode: OrbMode): Blob[] {
   if (page === "home") {
     const b = PALETTE[mode].blobs;
     return [
@@ -76,7 +76,7 @@ function blobsFor(page: Page, mode: "game" | "idle"): Blob[] {
   ];
 }
 
-function Bubbles({ page, mode }: { page: Page; mode: "game" | "idle" }) {
+function Bubbles({ page, mode }: { page: Page; mode: OrbMode }) {
   const key = page === "home" ? `home-${mode}` : page;
   return (
     <div className={s.bubbles} aria-hidden>

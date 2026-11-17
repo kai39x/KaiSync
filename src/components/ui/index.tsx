@@ -24,9 +24,10 @@ export function Sphere({ size, children, style, className }: { size: number; chi
 }
 
 /* ---------- Mode palettes (from the mockups) ---------- */
-export type OrbMode = "game" | "idle";
+export type OrbMode = "game" | "video" | "idle";
 export const PALETTE: Record<OrbMode, { c: string[]; glow: string; blobs: string[] }> = {
   game: { c: ["#5cc8ff", "#9b8cff", "#6ee7ff", "#5b6cff"], glow: "rgba(92,170,255,0.30)", blobs: ["#2f6fd6", "#6d4bd8", "#1f8fbf"] },
+  video: { c: ["#ffb84d", "#ff7aa8", "#ffd76a", "#ff9361"], glow: "rgba(255,170,90,0.26)", blobs: ["#c46a1f", "#b8406e", "#a07a1a"] },
   idle: { c: ["#e8e8e8", "#8a8a8a", "#f5f5f5", "#5a5a5a"], glow: "rgba(255,255,255,0.08)", blobs: ["#3a3a3a", "#2a2a2a", "#333333"] },
 };
 const conic = (c: string[]) => `conic-gradient(from 0deg, ${c[0]}, ${c[1]}, ${c[2]}, ${c[3]}, ${c[0]})`;

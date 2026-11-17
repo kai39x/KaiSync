@@ -6,7 +6,7 @@ use serde::Serialize;
 use tauri::{AppHandle, State};
 
 use crate::{
-    detector::{self, norm, FolderReport, Game},
+    detector::{self, norm, FolderReport, Game, PlayerInfo},
     engine::{Cmd, Engine, Status},
     settings::{ManualGame, Settings},
     tray,
@@ -17,6 +17,7 @@ use crate::{
 pub struct LibraryView {
     games: Vec<Game>,
     folders: Vec<FolderReport>,
+    player: Option<PlayerInfo>,
 }
 
 #[tauri::command]
@@ -27,7 +28,7 @@ pub fn get_status(engine: State<Engine>) -> Status {
 #[tauri::command]
 pub fn get_library(engine: State<Engine>) -> LibraryView {
     let lib = engine.library.read().unwrap();
-    LibraryView { games: lib.games.clone(), folders: lib.folders.clone() }
+    LibraryView { games: lib.games.clone(), folders: lib.folders.clone(), player: lib.player.clone() }
 }
 
 #[tauri::command]
@@ -182,4 +183,11 @@ pub fn tray_action(app: AppHandle, engine: State<Engine>, action: String) {
         "close" => {}
         other => tracing::warn!("tray: unknown action {other}"),
     }
+}
+
+/// Choose the video player exe (file picker in Settings).
+#[tauri::command]
+pub fn set_player(engine: State<Engine>, path: String) -> Settings {
+    tracing::info!("player chosen: {path}");
+    engine.update_settings(true, |s| s.player_path = Some(path))
 }

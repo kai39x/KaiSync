@@ -1,4 +1,4 @@
-//! Modes (Game / Idle) and debouncing.
+//! Modes (Game > Video > Idle) and debouncing.
 
 use std::time::{Duration, Instant};
 
@@ -8,6 +8,7 @@ use serde::Serialize;
 #[serde(rename_all = "lowercase")]
 pub enum Mode {
     Idle,
+    Video,
     Game,
 }
 
@@ -83,8 +84,8 @@ mod tests {
         assert_eq!(d.observe(Mode::Game, s(10000)), Some(Mode::Game));
         assert_eq!(d.observe(Mode::Game, s(11500)), None);
 
-        // Game closes -> Idle after the hold.
-        assert_eq!(d.observe(Mode::Idle, s(12000)), None);
-        assert_eq!(d.observe(Mode::Idle, s(15000)), Some(Mode::Idle));
+        // Game closes, player still open -> Video after the hold.
+        assert_eq!(d.observe(Mode::Video, s(12000)), None);
+        assert_eq!(d.observe(Mode::Video, s(15000)), Some(Mode::Video));
     }
 }

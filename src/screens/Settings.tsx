@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import { open } from "@tauri-apps/plugin-dialog";
 import { useTranslation } from "react-i18next";
 import { api } from "../api";
 import { Button, Glass, Segmented, Sphere, Toggle } from "../components/ui";
-import { IconHdr } from "../components/ui/icons";
+import { IconHdr, IconPlayCircle } from "../components/ui/icons";
 import type { Lang } from "../i18n";
 import { useStore } from "../state/store";
 import s from "./screens.module.css";
@@ -39,6 +40,32 @@ function GeneralCard() {
           <Toggle on={settings?.[o.key] ?? true} labelledBy={`opt-${o.key}`} onChange={async (on) => setSettings(await api.setGeneral(o.key, on))} />
         </div>
       ))}
+    </Glass>
+  );
+}
+
+function PlayerCard() {
+  const { t } = useTranslation();
+  const { library, setSettings } = useStore();
+  const p = library?.player;
+  const change = async () => {
+    const f = await open({ multiple: false, title: t("settings.pickPlayer"), filters: [{ name: t("games.programs"), extensions: ["exe"] }] });
+    if (typeof f === "string") setSettings(await api.setPlayer(f));
+  };
+  return (
+    <Glass className={s.card}>
+      <h2 className="h2">{t("settings.player")}</h2>
+      <div className={s.deviceRow}>
+        <Sphere size={42}><IconPlayCircle color="#ffb84d" /></Sphere>
+        <div className={s.grow} style={{ display: "flex", flexDirection: "column", gap: 1 }}>
+          <span className={s.deviceName}>{p?.name ?? "—"}</span>
+          <span className={`mono ${s.ellipsis}`} style={{ fontSize: 11.5, color: p && !p.exists ? "var(--warn)" : "#8a8a8a", textAlign: "end" }} title={p?.path}>
+            {p ? (p.exists ? p.path : `${p.path} · ${t("settings.playerMissing")}`) : ""}
+          </span>
+        </div>
+        <Button onClick={change}>{t("settings.change")}</Button>
+      </div>
+      <p className="lbl" style={{ margin: 0 }}>{t("settings.playerHint")}</p>
     </Glass>
   );
 }
@@ -137,6 +164,7 @@ export function Settings() {
       </header>
       <div className={s.settingsGrid}>
         <div className={s.col}>
+          <PlayerCard />
           <GeneralCard />
         </div>
         <div className={s.col}>

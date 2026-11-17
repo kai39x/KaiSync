@@ -17,7 +17,8 @@
   "modes": {
     "game": "Game mode",
     "idle": "Idle",
-    "paused": "Automation paused"
+    "paused": "Automation paused",
+    "video": "Watching mode"
   },
   "home": {
     "sub": "KaiSync turns HDR on when a game starts and restores it when you close it.",
@@ -45,7 +46,11 @@
     "rGame": "Game",
     "rGameDo": "HDR on",
     "rIdle": "Nothing",
-    "rIdleDo": "Back as it was"
+    "rIdleDo": "Back as it was",
+    "rVideo": "Video",
+    "rVideoDo": "HDR off",
+    "restoreOn": "On again after the video",
+    "restoreOnSub": "KaiSync turned HDR off for the video"
   },
   "games": {
     "title": "Games",
@@ -90,7 +95,7 @@
   },
   "settings": {
     "title": "Settings",
-    "sub": "Your HDR display and how KaiSync starts.",
+    "sub": "Your HDR display, video player and how KaiSync starts.",
     "general": "General",
     "language": "Language",
     "langNote": "English layout puts the sidebar on the left",
@@ -111,7 +116,12 @@
     "working": "One moment…",
     "nowOn": "HDR is on",
     "nowOff": "HDR is off",
-    "failed": "Didn't work: {{error}}"
+    "failed": "Didn't work: {{error}}",
+    "player": "Video player",
+    "playerHint": "While the player runs HDR is off; closing it puts HDR back as it was.",
+    "change": "Change",
+    "pickPlayer": "Pick your video player",
+    "playerMissing": "File not found"
   },
   "tray": {
     "open": "Open KaiSync",

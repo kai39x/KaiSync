@@ -29,7 +29,7 @@ export function TrayMenu() {
   const title = paused ? t("modes.paused") : t(`modes.${mode}`);
   const sub = paused
     ? t("status.paused")
-    : [mode === "game" ? status?.detail : null, status?.hdr.display ? `HDR ${status.hdr.on ? t("home.on") : t("home.off")}` : null]
+    : [mode !== "idle" ? status?.detail : null, status?.hdr.display ? `HDR ${status.hdr.on ? t("home.on") : t("home.off")}` : null]
         .filter(Boolean)
         .join(" · ");
 
