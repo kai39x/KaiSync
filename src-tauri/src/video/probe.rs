@@ -171,7 +171,7 @@ fn children<R: Read + Seek>(r: &mut R, end: u64, mut f: impl FnMut(&mut R, u32, 
         if !f(r, id, size)? {
             return Some(());
         }
-        r.seek(SeekFrom::Start(body + size)).ok()?;
+        r.seek(SeekFrom::Start(body.saturating_add(size))).ok()?;
     }
 }
 
@@ -186,11 +186,11 @@ fn mkv<R: Read + Seek>(r: &mut R) -> Option<Colour> {
         if id != SEGMENT {
             return Some(true);
         }
-        let seg_end = r.stream_position().ok()? + size;
+        let seg_end = r.stream_position().ok()?.saturating_add(size);
         let mut clusters = 0;
         children(r, seg_end, |r, id, size| {
             if id == TRACKS {
-                let tracks_end = r.stream_position().ok()? + size;
+                let tracks_end = r.stream_position().ok()?.saturating_add(size);
                 found = mkv_tracks(r, tracks_end);
                 return Some(false);
             }
@@ -212,17 +212,17 @@ fn mkv_tracks<R: Read + Seek>(r: &mut R, end: u64) -> Option<Colour> {
         if id != TRACK_ENTRY {
             return Some(true);
         }
-        let entry_end = r.stream_position().ok()? + size;
+        let entry_end = r.stream_position().ok()?.saturating_add(size);
         let mut is_video = false;
         let mut c = Colour::default();
         children(r, entry_end, |r, id, size| {
             match id {
                 TRACK_TYPE => is_video = read_uint(r, size)? == 1,
                 VIDEO => {
-                    let v_end = r.stream_position().ok()? + size;
+                    let v_end = r.stream_position().ok()?.saturating_add(size);
                     children(r, v_end, |r, id, size| {
                         if id == COLOUR {
-                            let c_end = r.stream_position().ok()? + size;
+                            let c_end = r.stream_position().ok()?.saturating_add(size);
                             children(r, c_end, |r, id, size| {
                                 match id {
                                     TRANSFER => c.transfer = read_uint(r, size),
@@ -236,7 +236,7 @@ fn mkv_tracks<R: Read + Seek>(r: &mut R, end: u64) -> Option<Colour> {
                     });
                 }
                 BLOCK_ADDITION_MAPPING => {
-                    let m_end = r.stream_position().ok()? + size;
+                    let m_end = r.stream_position().ok()?.saturating_add(size);
                     children(r, m_end, |r, id, size| {
                         if id == BLOCK_ADD_ID_TYPE {
                             let t = read_uint(r, size)?;
@@ -269,7 +269,7 @@ const VIDEO_ENTRIES: &[&[u8; 4]] = &[
 /// Box header -> (type, body start, body end).
 fn read_box<R: Read + Seek>(r: &mut R, parent_end: u64) -> Option<([u8; 4], u64, u64)> {
     let start = r.stream_position().ok()?;
-    if start + 8 > parent_end {
+    if start.saturating_add(8) > parent_end {
         return None;
     }
     let mut h = [0u8; 8];
@@ -288,7 +288,7 @@ fn read_box<R: Read + Seek>(r: &mut R, parent_end: u64) -> Option<([u8; 4], u64,
     if size < body - start {
         return None;
     }
-    Some((kind, body, (start + size).min(parent_end)))
+    Some((kind, body, start.saturating_add(size).min(parent_end)))
 }
 
 fn mp4<R: Read + Seek>(r: &mut R) -> Option<Colour> {

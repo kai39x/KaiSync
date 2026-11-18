@@ -34,6 +34,8 @@ pub enum Cmd {
     TogglePause,
     /// Settings changed or the user pressed refresh: rescan libraries.
     Rescan,
+    /// Something changed in a game folder: rescan only if games were added or removed.
+    FoldersChanged,
     /// HDR test buttons: turn on/off now (no restore duty).
     HdrManual(bool, mpsc::Sender<Result<bool, String>>),
     /// The chosen HDR display changed: refresh the status.
@@ -60,6 +62,7 @@ pub struct Status {
 }
 
 pub struct Engine {
+    app: AppHandle,
     tx: Sender<Cmd>,
     pub status: Arc<Mutex<Status>>,
     pub library: Arc<RwLock<Library>>,
@@ -83,7 +86,7 @@ impl Engine {
         let settings = Arc::new(Mutex::new(settings));
 
         let mut worker = Worker {
-            app,
+            app: app.clone(),
             tx: tx.clone(),
             status: status.clone(),
             library: library.clone(),
@@ -94,20 +97,22 @@ impl Engine {
             hdr: HdrController::new(),
             early_hdr: None,
             video: VideoWatch::new(),
+            folder_snapshot: Vec::new(),
+            display_present: None,
         };
         std::thread::Builder::new()
             .name("kaisync-engine".into())
             .spawn(move || worker.run(rx))
             .expect("spawn engine thread");
 
-        Self { tx, status, library, settings }
+        Self { app, tx, status, library, settings }
     }
 
     pub fn send(&self, cmd: Cmd) {
         let _ = self.tx.send(cmd);
     }
 
-    /// Mutate settings, persist them, and optionally trigger a rescan.
+    /// Mutate settings, persist them, tell every window, and optionally trigger a rescan.
     pub fn update_settings(&self, rescan: bool, f: impl FnOnce(&mut Settings)) -> Settings {
         let snapshot = {
             let mut s = self.settings.lock().unwrap();
@@ -115,6 +120,8 @@ impl Engine {
             s.save();
             s.clone()
         };
+        // The tray-menu window has its own copy of the settings (language…).
+        let _ = self.app.emit("settings-changed", &snapshot);
         if rescan {
             self.send(Cmd::Rescan);
         }
@@ -145,6 +152,10 @@ struct Worker {
     /// Holds the last time that game was seen.
     early_hdr: Option<Instant>,
     video: VideoWatch,
+    /// Direct subfolders of the game folders at the last scan.
+    folder_snapshot: Vec<String>,
+    /// Was an HDR display connected at the last check? (`None` = not checked yet)
+    display_present: Option<bool>,
 }
 
 impl Worker {
@@ -194,6 +205,7 @@ impl Worker {
             if self.refresh_hdr() {
                 self.publish();
             }
+            self.check_display_return();
         }
     }
 
@@ -206,6 +218,13 @@ impl Worker {
                 self.set_paused(p, sys);
             }
             Cmd::Rescan => self.rescan(),
+            Cmd::FoldersChanged => {
+                let now = folder_snapshot(&self.settings.lock().unwrap().game_folders);
+                if now != self.folder_snapshot {
+                    tracing::info!("game folder: games added or removed, rescanning");
+                    self.rescan();
+                }
+            }
             Cmd::HdrManual(on, reply) => {
                 let chosen = self.hdr_choice();
                 let r = self.hdr.manual(chosen.as_deref(), on);
@@ -253,6 +272,7 @@ impl Worker {
         *self.library.write().unwrap() = lib;
         self.cache.clear();
         self.watch_folders(&settings.game_folders);
+        self.folder_snapshot = folder_snapshot(&settings.game_folders);
         self.status.lock().unwrap().scanning = false;
         self.publish();
         let _ = self.app.emit("library-changed", ());
@@ -266,9 +286,10 @@ impl Worker {
         }
         let tx = self.tx.clone();
         let deb = new_debouncer(Duration::from_secs(3), move |res: notify_debouncer_mini::DebounceEventResult| {
+            // Games write saves/logs into their own folders all the time; the engine only
+            // rescans if the list of game subfolders actually changed.
             if res.is_ok() {
-                tracing::info!("game folder changed: rescanning");
-                let _ = tx.send(Cmd::Rescan);
+                let _ = tx.send(Cmd::FoldersChanged);
             }
         });
         match deb {
@@ -431,6 +452,25 @@ impl Worker {
         }
     }
 
+    /// The HDR display came back (TV switched on, cable re-plugged): Windows may have reset
+    /// its HDR state, so apply what the current mode wants again.
+    fn check_display_return(&mut self) {
+        let (present, paused) = {
+            let st = self.status.lock().unwrap();
+            (st.hdr.display.is_some(), st.paused)
+        };
+        let returned = self.display_present == Some(false) && present;
+        self.display_present = Some(present);
+        if returned && !paused {
+            if let Some(mode) = self.debouncer.applied() {
+                tracing::info!("hdr: display is back, re-applying {:?}", mode);
+                self.hdr_for(mode);
+                self.refresh_hdr();
+                self.publish();
+            }
+        }
+    }
+
     fn hdr_choice(&self) -> Option<String> {
         self.settings.lock().unwrap().hdr_display.clone()
     }
@@ -466,4 +506,20 @@ impl Worker {
         tray::update(&self.app, &st);
         let _ = self.app.emit("status-changed", &st);
     }
+}
+
+/// Sorted list of the direct subfolders of every game folder (cheap: one read_dir each).
+fn folder_snapshot(folders: &[String]) -> Vec<String> {
+    let mut out = Vec::new();
+    for f in folders {
+        if let Ok(rd) = std::fs::read_dir(f) {
+            for e in rd.flatten() {
+                if e.file_type().is_ok_and(|t| t.is_dir()) {
+                    out.push(norm(&e.path()));
+                }
+            }
+        }
+    }
+    out.sort();
+    out
 }

@@ -40,7 +40,12 @@ fn load() -> Runtime {
 fn save(r: &Runtime) {
     let _ = fs::create_dir_all(app_dir());
     if let Ok(t) = serde_json::to_string_pretty(r) {
-        let _ = fs::write(runtime_path(), t);
+        // Temp file + rename, so a crash never leaves a half-written file.
+        let path = runtime_path();
+        let tmp = path.with_extension("json.tmp");
+        if fs::write(&tmp, t).is_ok() {
+            let _ = fs::rename(&tmp, &path);
+        }
     }
 }
 

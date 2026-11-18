@@ -18,7 +18,7 @@ function shortPath(full: string, root?: string | null) {
   return full;
 }
 
-function PickPopover({ game, onClose }: { game: Game; onClose: () => void }) {
+function PickPopover({ game, onClose, up }: { game: Game; onClose: () => void; up: boolean }) {
   const { t } = useTranslation();
   const { setSettings } = useStore();
   const ref = useRef<HTMLDivElement>(null);
@@ -43,7 +43,7 @@ function PickPopover({ game, onClose }: { game: Game; onClose: () => void }) {
       ref={ref}
       role="menu"
       aria-label={t("games.pickTitle")}
-      className={`${s.popover}`}
+      className={`${s.popover} ${up ? s.popoverUp : ""}`}
       style={{ border: "1px solid rgba(255,255,255,.12)", boxShadow: "0 18px 40px rgba(0,0,0,.6)", backdropFilter: "blur(28px)" }}
       initial={{ opacity: 0, y: -6, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -75,6 +75,8 @@ function GameRow({ g }: { g: Game }) {
   const { t } = useTranslation();
   const { setSettings } = useStore();
   const [picking, setPicking] = useState(false);
+  const [up, setUp] = useState(false);
+  const rowRef = useRef<HTMLDivElement>(null);
 
   const src =
     g.source === "folder" ? t("games.src.folder", { name: baseName(g.folderRoot ?? "") }) : t(`games.src.${g.source}`);
@@ -82,7 +84,7 @@ function GameRow({ g }: { g: Game }) {
   const fileTitle = g.exe ?? g.installDir ?? "";
 
   return (
-    <div className={s.tableRow} style={{ opacity: g.enabled || g.needsPick ? 1 : 0.5 }}>
+    <div ref={rowRef} className={s.tableRow} style={{ opacity: g.enabled || g.needsPick ? 1 : 0.5 }}>
       <span className={`${s.gameName} ${s.ellipsis}`} title={g.name}>{g.name}</span>
       <span className={s.gameSrc}>
         <span className={s.ellipsis}>
@@ -105,14 +107,20 @@ function GameRow({ g }: { g: Game }) {
       </span>
       <div className={s.onCell}>
         {g.needsPick ? (
-          <Button size="small" aria-haspopup="menu" aria-expanded={picking} onClick={() => setPicking((v) => !v)}>
+          <Button size="small" aria-haspopup="menu" aria-expanded={picking} onClick={() => {
+              // Open upwards when the row sits in the lower half of the list.
+              const row = rowRef.current?.getBoundingClientRect();
+              const list = rowRef.current?.parentElement?.getBoundingClientRect();
+              setUp(!!row && !!list && row.top - list.top > list.height / 2);
+              setPicking((v) => !v);
+            }}>
             {t("games.pick")}
           </Button>
         ) : (
           <Toggle on={g.enabled} label={t("games.enable", { name: g.name })} onChange={async (on) => setSettings(await api.setGameEnabled(g.id, on))} />
         )}
       </div>
-      <AnimatePresence>{picking ? <PickPopover game={g} onClose={() => setPicking(false)} /> : null}</AnimatePresence>
+      <AnimatePresence>{picking ? <PickPopover game={g} up={up} onClose={() => setPicking(false)} /> : null}</AnimatePresence>
     </div>
   );
 }

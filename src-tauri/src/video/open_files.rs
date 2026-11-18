@@ -7,7 +7,10 @@
 use std::{
     ffi::c_void,
     path::PathBuf,
-    sync::mpsc,
+    sync::{
+        atomic::{AtomicBool, Ordering},
+        mpsc,
+    },
     time::Duration,
 };
 
@@ -23,6 +26,13 @@ use windows::{
 };
 
 const SYSTEM_EXTENDED_HANDLE_INFORMATION: i32 = 64;
+
+/// Access masks of synchronous named-pipe handles. Querying those can block forever while
+/// another thread waits on the pipe, so they are skipped (the same list handle tools use).
+const PIPE_LIKE_ACCESS: &[u32] = &[0x0012_019F, 0x001A_019F, 0x0012_0189, 0x0010_0000, 0x0012_008D];
+
+/// A lookup that got stuck is still running: don't start another one.
+static BUSY: AtomicBool = AtomicBool::new(false);
 const STATUS_INFO_LENGTH_MISMATCH: i32 = 0xC000_0004_u32 as i32;
 
 pub const VIDEO_EXTS: &[&str] = &[
@@ -86,7 +96,10 @@ fn open_files_blocking(pid: u32) -> Vec<PathBuf> {
         return Vec::new();
     };
     let mut out = Vec::new();
-    for e in entries.iter().filter(|e| e.unique_process_id == pid as usize) {
+    for e in entries
+        .iter()
+        .filter(|e| e.unique_process_id == pid as usize && !PIPE_LIKE_ACCESS.contains(&e.granted_access))
+    {
         let mut dup = HANDLE::default();
         let ok = unsafe {
             DuplicateHandle(proc_, HANDLE(e.handle_value as *mut c_void), GetCurrentProcess(), &mut dup, 0, false, DUPLICATE_SAME_ACCESS)
@@ -113,15 +126,23 @@ fn open_files_blocking(pid: u32) -> Vec<PathBuf> {
     out
 }
 
-/// Open files of `pid`, or `None` if it took too long.
+/// Open files of `pid`, or `None` if it took too long (or an earlier lookup is still stuck).
 pub fn open_files(pid: u32) -> Option<Vec<PathBuf>> {
+    if BUSY.swap(true, Ordering::AcqRel) {
+        return None;
+    }
     let (tx, rx) = mpsc::channel();
-    std::thread::Builder::new()
+    let spawned = std::thread::Builder::new()
         .name("kaisync-open-files".into())
         .spawn(move || {
-            let _ = tx.send(open_files_blocking(pid));
-        })
-        .ok()?;
+            let r = open_files_blocking(pid);
+            BUSY.store(false, Ordering::Release);
+            let _ = tx.send(r);
+        });
+    if spawned.is_err() {
+        BUSY.store(false, Ordering::Release);
+        return None;
+    }
     let r = rx.recv_timeout(Duration::from_secs(3)).ok();
     if r.is_none() {
         tracing::warn!("video: listing the player's open files timed out");

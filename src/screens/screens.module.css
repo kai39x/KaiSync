@@ -248,6 +248,10 @@
   gap: 2px;
   background: linear-gradient(180deg, rgba(40, 40, 46, .92), rgba(22, 22, 26, .94));
 }
+.popoverUp {
+  top: auto;
+  bottom: 52px;
+}
 .popTitle {
   padding: 6px 10px 8px;
 }

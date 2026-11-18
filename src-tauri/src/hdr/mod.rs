@@ -6,7 +6,12 @@
 
 pub mod controller;
 
-use std::{mem::size_of, thread, time::Duration};
+use std::{
+    mem::size_of,
+    sync::Mutex,
+    thread,
+    time::Duration,
+};
 
 use serde::Serialize;
 use windows::Win32::{
@@ -191,25 +196,52 @@ pub fn list_all() -> Result<Vec<Display>, String> {
     Ok(out)
 }
 
+/// Log `msg` only when it differs from the last message logged under `key`.
+/// This is called every poll (400 ms); a TV that is off would otherwise flood the log.
+fn log_once(key: &'static str, msg: Option<String>) {
+    static LAST: Mutex<Vec<(&'static str, Option<String>)>> = Mutex::new(Vec::new());
+    let mut last = LAST.lock().unwrap_or_else(|e| e.into_inner());
+    match last.iter_mut().find(|(k, _)| *k == key) {
+        Some((_, prev)) if *prev == msg => return,
+        Some((_, prev)) => *prev = msg.clone(),
+        None => last.push((key, msg.clone())),
+    }
+    if let Some(m) = msg {
+        tracing::warn!("{m}");
+    }
+}
+
 /// HDR-capable displays only (what the UI offers).
 pub fn list() -> Vec<Display> {
     match list_all() {
-        Ok(v) => v.into_iter().filter(|d| d.hdr_supported).collect(),
+        Ok(v) => {
+            log_once("list", None);
+            v.into_iter().filter(|d| d.hdr_supported).collect()
+        }
         Err(e) => {
-            tracing::error!("hdr: cannot list displays: {e}");
+            log_once("list", Some(format!("hdr: cannot list displays: {e}")));
             Vec::new()
         }
     }
 }
 
-/// The chosen display, else the primary HDR display, else the first HDR display.
+/// The chosen display; with no choice, the primary HDR display (else the first one).
+///
+/// If the chosen display isn't connected (TV off, other port), KaiSync does not switch
+/// to a different screen, unless it is the only HDR display (same screen on another port).
 pub fn resolve(chosen: Option<&str>) -> Option<Display> {
     let displays = list();
     if let Some(id) = chosen {
         if let Some(d) = displays.iter().find(|d| d.id == id) {
+            log_once("chosen", None);
             return Some(d.clone());
         }
-        tracing::warn!("hdr: chosen display {id} not connected; using the default");
+        if displays.len() == 1 {
+            log_once("chosen", Some(format!("hdr: chosen display not found; using the only HDR display ({})", displays[0].name)));
+            return displays.into_iter().next();
+        }
+        log_once("chosen", Some(format!("hdr: chosen display {id} is not connected; leaving HDR alone")));
+        return None;
     }
     displays.iter().find(|d| d.primary).or(displays.first()).cloned()
 }

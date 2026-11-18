@@ -99,7 +99,7 @@ pub fn version_string(path: &Path, key: &str) -> Option<String> {
         let mut langs: Vec<(u16, u16)> = Vec::new();
         if VerQueryValueW(buf.as_ptr().cast(), &trans, &mut ptr, &mut len).as_bool() && len >= 4 {
             let words = std::slice::from_raw_parts(ptr as *const u16, (len / 2) as usize);
-            for c in words.chunks_exact(2) {
+            for c in words.as_chunks::<2>().0 {
                 langs.push((c[0], c[1]));
             }
         }

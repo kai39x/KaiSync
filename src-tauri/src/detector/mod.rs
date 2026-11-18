@@ -151,7 +151,7 @@ impl Matcher {
             }
         }
         // Longest dir first so nested installs resolve to the most specific game.
-        m.dir_rules.sort_by(|a, b| b.0.len().cmp(&a.0.len()));
+        m.dir_rules.sort_by_key(|r| std::cmp::Reverse(r.0.len()));
         // Full path when we know it; a bare exe name matches by name only.
         if player.is_absolute() {
             m.player_path = Some(norm(player));
@@ -231,7 +231,7 @@ pub fn build_library(settings: &Settings) -> Library {
     for g in &mut games {
         g.enabled = settings.game_enabled.get(&g.id).copied().unwrap_or(g.default_enabled);
     }
-    games.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
+    games.sort_by_key(|a| a.name.to_lowercase());
 
     let player_path = player::resolve(settings);
     let player = Some(PlayerInfo {

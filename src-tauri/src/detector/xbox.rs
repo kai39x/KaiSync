@@ -15,7 +15,7 @@ fn gaming_roots(drive: &Path) -> Vec<PathBuf> {
         return Vec::new();
     }
     let units: Vec<u16> = bytes[8..]
-        .chunks_exact(2)
+        .as_chunks::<2>().0.iter()
         .map(|c| u16::from_le_bytes([c[0], c[1]]))
         .collect();
     units

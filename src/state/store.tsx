@@ -45,6 +45,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     const un = [
       listen<Status>("status-changed", (e) => setStatus(e.payload)),
       listen("library-changed", async () => setLibrary(await api.getLibrary())),
+      // Another window (or the backend) changed the settings, e.g. the language.
+      listen<Settings>("settings-changed", (e) => setSettings(e.payload)),
     ];
     return () => {
       alive = false;
