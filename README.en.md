@@ -30,8 +30,8 @@ Get the latest version from [Releases](https://github.com/kai39x/KaiSync/release
 
 | File | Version |
 |---|---|
-| `KaiSync_1.2.0_x64-setup.exe` | **Installer** (recommended). Installs for the current user without admin rights, adds a Start menu entry, offers a desktop icon, and can be uninstalled from Windows Settings |
-| `KaiSync_1.2.0_x64-portable.exe` | **Portable**: a single file that runs without installing. Put it in any folder and run it |
+| `KaiSync_1.2.1_x64-setup.exe` | **Installer** (recommended). Installs for the current user without admin rights, adds a Start menu entry, offers a desktop icon, and can be uninstalled from Windows Settings |
+| `KaiSync_1.2.1_x64-portable.exe` | **Portable**: a single file that runs without installing. Put it in any folder and run it |
 
 - **First run:** KaiSync registers itself to start with Windows, so it runs in the background with no window. You'll find it under the small arrow next to the clock. You can turn this off in Settings.
 - **Portable copy:** it keeps its settings in `%APPDATA%\KaiSync`, same as the installed one. If you move the file, run it once from the new place so the start-with-Windows path is updated.
